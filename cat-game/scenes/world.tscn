@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3]
+[gd_scene load_steps=52 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
 [ext_resource type="TileSet" path="res://assets/tiles/shallow_deep.tres" id="33_sea"]
@@ -12,6 +12,12 @@
 [ext_resource type="Resource" path="res://data/fish/snapper.tres" id="9_snapper"]
 [ext_resource type="Resource" path="res://data/fish/grouper.tres" id="10_grouper"]
 [ext_resource type="Resource" path="res://data/fish/tuna.tres" id="11_tuna"]
+[ext_resource type="Resource" path="res://data/fish/wrasse.tres" id="60_f"]
+[ext_resource type="Resource" path="res://data/fish/clownfish.tres" id="61_f"]
+[ext_resource type="Resource" path="res://data/fish/eel.tres" id="62_f"]
+[ext_resource type="Resource" path="res://data/fish/pomfret.tres" id="63_f"]
+[ext_resource type="Resource" path="res://data/fish/lanternfish.tres" id="64_f"]
+[ext_resource type="Resource" path="res://data/fish/swordfish.tres" id="65_f"]
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="12_hud"]
 [ext_resource type="PackedScene" path="res://scenes/panel.tscn" id="32_panel"]
 [ext_resource type="PackedScene" path="res://scenes/shop.tscn" id="34_shop"]
@@ -202,7 +208,7 @@ script = ExtResource("31_daylight")
 
 [node name="Casting" type="Node2D" parent="."]
 script = ExtResource("6_casting")
-fish_pool = Array[Resource]([ExtResource("7_sardine"), ExtResource("8_mackerel"), ExtResource("9_snapper"), ExtResource("10_grouper"), ExtResource("11_tuna")])
+fish_pool = Array[Resource]([ExtResource("7_sardine"), ExtResource("8_mackerel"), ExtResource("9_snapper"), ExtResource("10_grouper"), ExtResource("11_tuna"), ExtResource("60_f"), ExtResource("61_f"), ExtResource("62_f"), ExtResource("63_f"), ExtResource("64_f"), ExtResource("65_f")])
 
 [node name="HUD" parent="." instance=ExtResource("12_hud")]
 

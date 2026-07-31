@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="FishData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/fish_data.gd" id="1_fish"]
+[ext_resource type="Texture2D" path="res://assets/fish/pomfret.png" id="2_sprite"]
+[ext_resource type="Resource" path="res://data/items/pomfret.tres" id="3_item"]
+
+[resource]
+script = ExtResource("1_fish")
+display_name = "pomfret"
+rarity = 2
+value = 28
+sprite = ExtResource("2_sprite")
+item = ExtResource("3_item")
+fight_strength = 0.65
+stamina = 11.0
+burst_frequency = 3.4
+burst_warning = 0.55
+safe_band_width = 0.32
+min_depth = 2

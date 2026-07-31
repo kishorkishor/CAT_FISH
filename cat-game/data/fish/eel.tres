@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="FishData" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/fish_data.gd" id="1_fish"]
+[ext_resource type="Texture2D" path="res://assets/fish/eel.png" id="2_sprite"]
+[ext_resource type="Resource" path="res://data/items/eel.tres" id="3_item"]
+
+[resource]
+script = ExtResource("1_fish")
+display_name = "eel"
+rarity = 1
+value = 18
+sprite = ExtResource("2_sprite")
+item = ExtResource("3_item")
+fight_strength = 0.7
+stamina = 12.0
+burst_frequency = 2.2
+burst_warning = 0.45
+safe_band_width = 0.34
+min_depth = 2

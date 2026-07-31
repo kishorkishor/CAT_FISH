@@ -15,7 +15,12 @@ func _initialize() -> void:
 	log_book.entries.clear()
 
 	var species: Array = log_book.all_species()
-	_ok(species.size() == 5, "%d species in the log" % species.size())
+	_ok(species.size() >= 5, "%d species in the log" % species.size())
+	var depths := {}
+	for f in species:
+		depths[f.min_depth] = int(depths.get(f.min_depth, 0)) + 1
+	_ok(depths.has(1) and depths.has(2) and depths.has(3),
+		"species spread across every depth: %s" % [depths])
 	_ok(log_book.caught_count() == 0, "the log starts empty")
 
 	var sardine: FishData = load("res://data/fish/sardine.tres")
