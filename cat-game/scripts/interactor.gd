@@ -240,5 +240,6 @@ func _sleep() -> void:
 		Events.notice.emit("no bed nearby")
 		return
 	Clock.sleep_until_morning()
+	Events.slept.emit()
 	Game.save_game()
 	Events.notice.emit("slept until morning - day %d" % Clock.day)

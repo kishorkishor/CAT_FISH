@@ -139,6 +139,7 @@ func sell_all() -> int:
 		bag.erase(id)
 	if total > 0:
 		earn(total)
+		Events.sold.emit(total)
 		Events.bag_changed.emit()
 	return total
 
@@ -172,6 +173,7 @@ func save_game() -> void:
 		"hour": Clock.hour,
 		"farm": _farm.to_save() if _farm != null else [],
 		"buildings": _buildings.to_save() if _buildings != null else [],
+		"goals": Goals.to_save(),
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
@@ -204,6 +206,7 @@ func load_game() -> bool:
 		_farm.from_save(parsed.get("farm", []))
 	if _buildings != null:
 		_buildings.from_save(parsed.get("buildings", []))
+	Goals.from_save(parsed.get("goals", {}))
 
 	Events.money_changed.emit(money)
 	Events.bag_changed.emit()

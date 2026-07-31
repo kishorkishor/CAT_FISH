@@ -11,3 +11,12 @@ const NAMES := {
 const ACTIONS := {
 	HAND: "harvest", HOE: "till soil", CAN: "water", ROD: "cast", BUILD: "build",
 }
+
+## Icon per tool, so the belt shows what is in paw instead of spelling it.
+const ICONS := {
+	HAND: "res://assets/ui/tool_hand.png",
+	HOE: "res://assets/ui/tool_hoe.png",
+	CAN: "res://assets/ui/tool_can.png",
+	ROD: "res://assets/ui/tool_rod.png",
+	BUILD: "res://assets/ui/tool_hammer.png",
+}

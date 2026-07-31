@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="GoalData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/goal_data.gd" id="1_s"]
+
+[resource]
+script = ExtResource("1_s")
+id = "01_catch"
+title = "catch your first fish"
+hint = "hold the rod, stand at the water, press E"
+track = "caught"
+target = 1
+reward = 20

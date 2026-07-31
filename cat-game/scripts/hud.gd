@@ -10,6 +10,12 @@ extends CanvasLayer
 @onready var _clock: Label = %ClockLabel
 @onready var _tool: Label = %ToolLabel
 @onready var _prompt: Label = %Prompt
+@onready var _goal: Label = %Goal
+@onready var _goal_hint: Label = %GoalHint
+@onready var _belt: HBoxContainer = %Belt
+@onready var _coin: TextureRect = %CoinIcon
+
+var _slots: Array[TextureRect] = []
 
 var _interactor: Node2D = null
 var _farm: Node2D = null
@@ -34,7 +40,28 @@ func _ready() -> void:
 	Events.bag_changed.connect(_refresh)
 	Events.notice.connect(func(message: String): _flash(message))
 	Events.tool_changed.connect(func(_t): _refresh())
+	Goals.changed.connect(_refresh_goal)
+	Goals.completed.connect(func(_g): _refresh_goal())
+	_build_belt()
+	_refresh_goal()
 	_refresh()
+
+
+## One slot per tool, in the order the Tab key walks them.
+func _build_belt() -> void:
+	for tool in [Tools.HAND, Tools.HOE, Tools.CAN, Tools.ROD, Tools.BUILD]:
+		var slot := TextureRect.new()
+		slot.texture = load(Tools.ICONS[tool])
+		slot.custom_minimum_size = Vector2(40, 40)
+		slot.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		_belt.add_child(slot)
+		_slots.append(slot)
+
+
+func _refresh_goal() -> void:
+	_goal.text = Goals.line()
+	var goal: GoalData = Goals.current()
+	_goal_hint.text = goal.hint if goal != null else ""
 
 
 func _process(_delta: float) -> void:
@@ -67,6 +94,10 @@ func _refresh() -> void:
 	_coins.text = "coins: %d" % Game.money
 	_bag.text = "bag: %d (%d)" % [Game.total_items(), Game.bag_value()]
 	_sell.disabled = Game.bag_value() <= 0
+	for i in _slots.size():
+		var held: bool = _interactor != null and _interactor.tool == i
+		_slots[i].modulate = Color.WHITE if held else Color(0.75, 0.78, 0.8, 0.6)
+		_slots[i].scale = Vector2.ONE if held else Vector2(0.82, 0.82)
 	if _interactor != null:
 		var extra := ""
 		if _interactor.tool == Tools.HAND:

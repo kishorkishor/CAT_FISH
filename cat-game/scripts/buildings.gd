@@ -100,6 +100,8 @@ func place(cell: Vector2i, entry: BuildEntry, charge := true) -> bool:
 	p.node.position = to_local(_ground.map_to_local(cell))
 	add_child(p.node)
 	placed.append(p)
+	if charge:
+		Events.built.emit(entry)
 	return true
 
 

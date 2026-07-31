@@ -1,14 +1,25 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Texture2D" path="res://assets/ui/coin.png" id="2_coin"]
 
 [node name="HUD" type="CanvasLayer"]
 layer = 5
 script = ExtResource("1_hud")
 
+[node name="CoinIcon" type="TextureRect" parent="."]
+unique_name_in_owner = true
+offset_left = 18.0
+offset_top = 14.0
+offset_right = 46.0
+offset_bottom = 42.0
+texture = ExtResource("2_coin")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="Coins" type="Label" parent="."]
 unique_name_in_owner = true
-offset_left = 20.0
+offset_left = 52.0
 offset_top = 16.0
 offset_right = 260.0
 offset_bottom = 48.0
@@ -17,9 +28,9 @@ text = "coins: 0"
 
 [node name="Bag" type="Label" parent="."]
 unique_name_in_owner = true
-offset_left = 20.0
+offset_left = 52.0
 offset_top = 48.0
-offset_right = 300.0
+offset_right = 320.0
 offset_bottom = 80.0
 theme_override_font_sizes/font_size = 22
 text = "bag: 0 fish (0)"
@@ -98,3 +109,52 @@ offset_bottom = 220.0
 theme_override_font_sizes/font_size = 26
 horizontal_alignment = 1
 text = "caught!"
+
+[node name="Goal" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -260.0
+offset_right = 260.0
+offset_top = 96.0
+offset_bottom = 126.0
+theme_override_colors/font_color = Color(1, 0.94, 0.66, 1)
+theme_override_font_sizes/font_size = 21
+horizontal_alignment = 1
+text = "catch your first fish"
+
+[node name="GoalHint" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_right = 300.0
+offset_top = 124.0
+offset_bottom = 150.0
+modulate = Color(1, 1, 1, 0.6)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = ""
+
+[node name="BeltBack" type="ColorRect" parent="."]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -122.0
+offset_right = 258.0
+offset_bottom = -64.0
+color = Color(0, 0, 0, 0.35)
+
+[node name="Belt" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = -116.0
+offset_right = 300.0
+offset_bottom = -70.0
+theme_override_constants/separation = 6

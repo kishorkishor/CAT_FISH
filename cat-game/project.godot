@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 Events="*res://scripts/events.gd"
 Clock="*res://scripts/clock.gd"
 Game="*res://scripts/game.gd"
+Goals="*res://scripts/goals.gd"
 
 [display]
 

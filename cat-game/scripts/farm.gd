@@ -72,6 +72,7 @@ func plant(cell: Vector2i, crop: CropData) -> bool:
 	plot.stage = 0
 	plot.days_in_stage = 0
 	_refresh_sprite(plot)
+	Events.crop_planted.emit(crop)
 	return true
 
 
