@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3]
+[gd_scene load_steps=45 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
 [ext_resource type="TileSet" path="res://assets/tiles/shallow_deep.tres" id="33_sea"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="12_hud"]
 [ext_resource type="PackedScene" path="res://scenes/panel.tscn" id="32_panel"]
 [ext_resource type="PackedScene" path="res://scenes/shop.tscn" id="34_shop"]
+[ext_resource type="PackedScene" path="res://scenes/touch_ui.tscn" id="36_touch"]
 [ext_resource type="PackedScene" path="res://scenes/props/shopkeeper.tscn" id="35_keeper"]
 [ext_resource type="PackedScene" path="res://scenes/props/pier.tscn" id="13_pier"]
 [ext_resource type="PackedScene" path="res://scenes/props/mooring_post.tscn" id="14_post"]
@@ -208,3 +209,5 @@ fish_pool = Array[Resource]([ExtResource("7_sardine"), ExtResource("8_mackerel")
 [node name="Panel" parent="." instance=ExtResource("32_panel")]
 
 [node name="Shop" parent="." instance=ExtResource("34_shop")]
+
+[node name="TouchUI" parent="." instance=ExtResource("36_touch")]

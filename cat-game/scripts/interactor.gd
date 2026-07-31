@@ -21,6 +21,10 @@ var tool: int = Tools.HAND:
 			_buildings.show_ghost(current_build())
 		Events.tool_changed.emit(tool)
 
+## Set by the touch UI when it takes over. Build placement follows the cursor on
+## desktop and the cat's facing on a phone, because a finger has no hover.
+var touch_mode := false
+
 var seed_index := 0
 var build_index := 0
 
@@ -97,6 +101,8 @@ func target_cell() -> Vector2i:
 
 
 func cursor_cell() -> Vector2i:
+	if touch_mode:
+		return target_cell()
 	return _ground.local_to_map(_ground.to_local(_ground.get_global_mouse_position()))
 
 
