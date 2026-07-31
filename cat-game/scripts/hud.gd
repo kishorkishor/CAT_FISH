@@ -65,7 +65,7 @@ func _refresh_goal() -> void:
 
 
 func _process(_delta: float) -> void:
-	_clock.text = Clock.clock_text()
+	_clock.text = "%s   %s" % [Clock.clock_text(), Weather.name_of()]
 	if _interactor == null or _farm == null:
 		return
 	# Whatever the cat has walked up to speaks first; the ground only gets a word

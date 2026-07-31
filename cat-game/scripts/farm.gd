@@ -149,8 +149,9 @@ func _on_day_passed(_day: int) -> void:
 				plot.stage += 1
 				plot.days_in_stage = 0
 				_refresh_sprite(plot)
-		# Soil dries overnight. Growth is a habit, not a one-off.
-		plot.watered = false
+		# Soil dries overnight unless it rained, which is the whole reason to look
+		# at the forecast: a wet week is a week you can spend fishing.
+		plot.watered = Weather.is_wet()
 	queue_redraw()
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3]
+[gd_scene load_steps=55 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
 [ext_resource type="TileSet" path="res://assets/tiles/shallow_deep.tres" id="33_sea"]
@@ -42,6 +42,7 @@
 [ext_resource type="Script" path="res://scripts/buildings.gd" id="29_buildings"]
 [ext_resource type="Script" path="res://scripts/interactor.gd" id="30_interactor"]
 [ext_resource type="Script" path="res://scripts/daylight.gd" id="31_daylight"]
+[ext_resource type="Script" path="res://scripts/rainfall.gd" id="37_rain"]
 [ext_resource type="Resource" path="res://data/build/planter.tres" id="40_b"]
 [ext_resource type="Resource" path="res://data/build/lamp.tres" id="41_b"]
 [ext_resource type="Resource" path="res://data/build/cottage.tres" id="42_b"]
@@ -218,3 +219,9 @@ fish_pool = Array[Resource]([ExtResource("7_sardine"), ExtResource("8_mackerel")
 [node name="Shop" parent="." instance=ExtResource("34_shop")]
 
 [node name="TouchUI" parent="." instance=ExtResource("36_touch")]
+
+[node name="RainLayer" type="CanvasLayer" parent="."]
+layer = 6
+
+[node name="Rainfall" type="Node2D" parent="RainLayer"]
+script = ExtResource("37_rain")

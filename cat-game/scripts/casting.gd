@@ -60,7 +60,7 @@ func _find_water_ahead() -> Vector2i:
 		if not _water.is_fully_secondary(cell):
 			continue
 		var depth: int = _water.depth_at(cell)
-		if depth <= Game.rod.max_depth and depth > best_depth:
+		if depth <= Game.rod.max_depth + Weather.depth_bonus() and depth > best_depth:
 			best = cell
 			best_depth = depth
 	return best
@@ -83,7 +83,7 @@ func _cast_to(cell: Vector2i) -> void:
 	add_child(minigame)
 	minigame.caught.connect(func(_fish): _finish())
 	minigame.escaped.connect(_finish)
-	minigame.start(_pick_fish(_water.depth_at(cell)))
+	minigame.start(_pick_fish(_water.depth_at(cell) + Weather.depth_bonus()))
 
 
 ## Only fish that live at this depth or shallower will bite, and the rarer ones

@@ -195,6 +195,7 @@ func save_game() -> void:
 		"buildings": _buildings.to_save() if _buildings != null else [],
 		"goals": Goals.to_save(),
 		"log": LogBook.to_save(),
+		"weather": Weather.to_save(),
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
@@ -229,6 +230,7 @@ func load_game() -> bool:
 		_buildings.from_save(parsed.get("buildings", []))
 	Goals.from_save(parsed.get("goals", {}))
 	LogBook.from_save(parsed.get("log", {}))
+	Weather.from_save(int(parsed.get("weather", 0)))
 
 	Events.money_changed.emit(money)
 	Events.bag_changed.emit()
