@@ -1,0 +1,10 @@
+{
+  "tile_width": 64,
+  "tile_height": 48,
+  "cell_width": 64,
+  "cell_height": 32,
+  "depth": 16,
+  "texture_origin_y": -8,
+  "cols": 4,
+  "rows": 4
+}

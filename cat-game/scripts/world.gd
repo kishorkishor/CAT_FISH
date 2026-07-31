@@ -1,11 +1,16 @@
 extends Node2D
-## An island: grass in the middle, a sand beach, open water around it.
+## An island: grass in the middle, a sand beach, shallows, then open sea.
 ##
-## Two 16-tile corner sets stacked. The lower layer paints sand into water; the
-## upper paints grass into sand and leaves its empty cells unpainted so the water
-## shows through. Neither set knows about the other - the illusion of three
-## terrains comes from the stacking, not from a bigger tileset.
+## Three 16-tile corner sets stacked, each one leaving its empty cells unpainted
+## so the layer beneath shows through. Sea paints shallow water into deep, Water
+## paints sand into shallow, Land paints grass into sand. No set knows about the
+## others - four terrains come out of the stacking, not out of a bigger tileset.
+##
+## The radii are what tie the picture to the rules: the Sea layer's shallow ring
+## ends exactly where GroundBuilder.depth_at() stops calling the water shallow,
+## so the colour under the cat always agrees with the animation it is playing.
 
+@onready var _sea: TileMapLayer = $Sea
 @onready var _water: TileMapLayer = $Water
 @onready var _land: TileMapLayer = $Land
 @onready var _player: CharacterBody2D = $Entities/Player
@@ -26,7 +31,9 @@ func _set_camera_limits() -> void:
 	var cam: Camera2D = _player.get_node_or_null("Camera2D")
 	if cam == null:
 		return
-	var r := _water.get_used_rect()
+	# Measured on the bottom layer: it is the only one that paints every cell, so
+	# the layers above with skip_empty would fence the camera to the island.
+	var r := _sea.get_used_rect()
 	if r.size == Vector2i.ZERO:
 		return
 	var corners := [
@@ -39,7 +46,7 @@ func _set_camera_limits() -> void:
 		var p := _water.map_to_local(c)
 		lo = lo.min(p)
 		hi = hi.max(p)
-	var pad := Vector2(_water.tile_set.tile_size)
+	var pad := Vector2(_sea.tile_set.tile_size)
 	cam.limit_left = int(lo.x - pad.x)
 	cam.limit_right = int(hi.x + pad.x)
 	cam.limit_top = int(lo.y - pad.y)

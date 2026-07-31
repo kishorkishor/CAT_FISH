@@ -98,6 +98,16 @@ def main() -> int:
     atlas.save(out_png)
 
     geom = measure_isometric(tiles[0])
+    # A set that has to line up with another one cannot trust the measurement:
+    # the silhouette is read off the first tile, and two sets drawn to the same
+    # canvas can still disagree by a pixel or two about where the diamond ends.
+    # Two pixels is invisible on one tile and a visibly sliding layer when two
+    # tilemaps are stacked, so an override file wins over the measurement.
+    override_path = raw_dir / "geometry.json"
+    if override_path.exists():
+        override = json.loads(override_path.read_text())
+        geom.update(override)
+        print(f"{override_path}  pinned {sorted(override)}")
     if frames:
         geom["anim_frames"] = len(frames)
         geom["anim_row"] = ROWS

@@ -1,6 +1,7 @@
-[gd_scene load_steps=40 format=3]
+[gd_scene load_steps=42 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
+[ext_resource type="TileSet" path="res://assets/tiles/shallow_deep.tres" id="33_sea"]
 [ext_resource type="TileSet" path="res://assets/tiles/grass_sand.tres" id="2_land"]
 [ext_resource type="Script" path="res://scripts/ground_builder.gd" id="3_ground"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="4_player"]
@@ -12,6 +13,7 @@
 [ext_resource type="Resource" path="res://data/fish/grouper.tres" id="10_grouper"]
 [ext_resource type="Resource" path="res://data/fish/tuna.tres" id="11_tuna"]
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="12_hud"]
+[ext_resource type="PackedScene" path="res://scenes/panel.tscn" id="32_panel"]
 [ext_resource type="PackedScene" path="res://scenes/props/pier.tscn" id="13_pier"]
 [ext_resource type="PackedScene" path="res://scenes/props/mooring_post.tscn" id="14_post"]
 [ext_resource type="PackedScene" path="res://scenes/props/catamaran.tscn" id="15_catamaran"]
@@ -47,6 +49,17 @@
 [node name="World" type="Node2D"]
 script = ExtResource("5_world")
 
+[node name="Sea" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = ExtResource("33_sea")
+script = ExtResource("3_ground")
+grid_size = 96
+island_radius = 26.0
+edge_wobble = 1.8
+bay_depth = 6.0
+bay_angle_deg = 90.0
+bay_radius = 8.0
+
 [node name="Water" type="TileMapLayer" parent="."]
 y_sort_enabled = true
 tile_set = ExtResource("1_water")
@@ -54,6 +67,7 @@ script = ExtResource("3_ground")
 grid_size = 96
 island_radius = 23.0
 edge_wobble = 1.8
+skip_empty = true
 bay_depth = 9.0
 bay_angle_deg = 90.0
 bay_radius = 8.0
@@ -169,7 +183,7 @@ position = Vector2(2912, 848)
 [node name="Tuft6" parent="Entities" instance=ExtResource("23_tuft")]
 position = Vector2(3488, 816)
 
-[node name="Buildings" type="Node2D" parent="."]
+[node name="Buildings" type="Node2D" parent="." groups=["buildings"]]
 script = ExtResource("29_buildings")
 catalogue = Array[Resource]([ExtResource("40_b"), ExtResource("41_b"), ExtResource("42_b"), ExtResource("43_b"), ExtResource("44_b"), ExtResource("45_b"), ExtResource("46_b")])
 
@@ -185,3 +199,5 @@ script = ExtResource("6_casting")
 fish_pool = Array[Resource]([ExtResource("7_sardine"), ExtResource("8_mackerel"), ExtResource("9_snapper"), ExtResource("10_grouper"), ExtResource("11_tuna")])
 
 [node name="HUD" parent="." instance=ExtResource("12_hud")]
+
+[node name="Panel" parent="." instance=ExtResource("32_panel")]

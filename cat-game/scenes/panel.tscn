@@ -1,0 +1,96 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/panel.gd" id="1_panel"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.08, 0.11, 0.14, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42, 0.62, 0.62, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="Panel" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_panel")
+
+[node name="Dim" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.55)
+
+[node name="Card" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 40.0
+offset_right = -24.0
+offset_bottom = -40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="Card"]
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="Rows" type="VBoxContainer" parent="Card/Margin"]
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Card/Margin/Rows"]
+
+[node name="PanelTitle" type="Label" parent="Card/Margin/Rows/Header"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Tides of Tuna"
+
+[node name="Wallet" type="Label" parent="Card/Margin/Rows/Header"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(1, 0.87, 0.42, 1)
+theme_override_font_sizes/font_size = 24
+text = "0 coins"
+
+[node name="Rule" type="HSeparator" parent="Card/Margin/Rows"]
+
+[node name="BagTitle" type="Label" parent="Card/Margin/Rows"]
+theme_override_colors/font_color = Color(0.62, 0.86, 0.86, 1)
+theme_override_font_sizes/font_size = 19
+text = "IN THE BAG"
+
+[node name="Scroll" type="ScrollContainer" parent="Card/Margin/Rows"]
+size_flags_vertical = 3
+
+[node name="Items" type="VBoxContainer" parent="Card/Margin/Rows/Scroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="CropsTitle" type="Label" parent="Card/Margin/Rows"]
+theme_override_colors/font_color = Color(0.62, 0.86, 0.86, 1)
+theme_override_font_sizes/font_size = 19
+text = "IN THE GROUND"
+
+[node name="Crops" type="VBoxContainer" parent="Card/Margin/Rows"]
+unique_name_in_owner = true
+
+[node name="BuiltTitle" type="Label" parent="Card/Margin/Rows"]
+theme_override_colors/font_color = Color(0.62, 0.86, 0.86, 1)
+theme_override_font_sizes/font_size = 19
+text = "BUILT"
+
+[node name="Built" type="VBoxContainer" parent="Card/Margin/Rows"]
+unique_name_in_owner = true
+
+[node name="Rule2" type="HSeparator" parent="Card/Margin/Rows"]
+
+[node name="Controls" type="Label" parent="Card/Margin/Rows"]
+autowrap_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.6)
+theme_override_font_sizes/font_size = 17
+text = "WASD move   ·   Shift sprint   ·   Space hop   ·   Tab / Q change tool   ·   E use   ·   R cycle seed or building   ·   X demolish   ·   hold left mouse to reel   ·   Z sleep   ·   F5 save   ·   I close"
