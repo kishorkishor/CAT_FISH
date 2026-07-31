@@ -1,0 +1,58 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_00.png" id="1_p2p1g"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_01.png" id="2_d2ycx"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_02.png" id="3_h57sn"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_03.png" id="4_ypamg"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_04.png" id="5_4wvdf"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_05.png" id="6_2ydsq"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_06.png" id="7_bm1i6"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_07.png" id="8_tyvm8"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_08.png" id="9_mg3mu"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_09.png" id="10_dmkri"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_10.png" id="11_usv0n"]
+[ext_resource type="Texture2D" path="res://assets/effects/grass_tuft/frame_11.png" id="12_5t878"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_p2p1g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_d2ycx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_h57sn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_ypamg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_4wvdf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_2ydsq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_bm1i6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_tyvm8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_mg3mu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_dmkri")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_usv0n")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_5t878")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 8.0
+}]
