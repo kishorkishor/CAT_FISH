@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/scenery.gd" id="1_scenery"]
+[ext_resource type="Texture2D" path="res://assets/props/mooring_post.png" id="2_art"]
+
+[sub_resource type="CircleShape2D" id="Shape_mooring_post"]
+radius = 5.0
+
+[node name="MooringPost" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_scenery")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+centered = false
+offset = Vector2(-24.0, -63)
+texture = ExtResource("2_art")
+
+[node name="Solid" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Solid"]
+shape = SubResource("Shape_mooring_post")

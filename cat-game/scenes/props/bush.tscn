@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/scenery.gd" id="1_scenery"]
+[ext_resource type="Texture2D" path="res://assets/props/bush.png" id="2_art"]
+
+[node name="Bush" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_scenery")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+centered = false
+offset = Vector2(-16.0, -24)
+texture = ExtResource("2_art")

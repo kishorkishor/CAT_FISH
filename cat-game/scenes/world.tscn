@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
 [ext_resource type="TileSet" path="res://assets/tiles/grass_sand.tres" id="2_land"]
@@ -12,15 +12,21 @@
 [ext_resource type="Resource" path="res://data/fish/grouper.tres" id="10_grouper"]
 [ext_resource type="Resource" path="res://data/fish/tuna.tres" id="11_tuna"]
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="12_hud"]
-[ext_resource type="Script" path="res://scripts/scenery.gd" id="13_scenery"]
-[ext_resource type="Texture2D" path="res://assets/props/catamaran.png" id="14_catamaran"]
-[ext_resource type="Texture2D" path="res://assets/props/rowboat.png" id="15_rowboat"]
-[ext_resource type="Texture2D" path="res://assets/props/palm.png" id="16_palm"]
-[ext_resource type="Texture2D" path="res://assets/props/tree.png" id="17_tree"]
-[ext_resource type="Texture2D" path="res://assets/props/bush.png" id="18_bush"]
-[ext_resource type="Texture2D" path="res://assets/props/rock.png" id="19_rock"]
-[ext_resource type="Texture2D" path="res://assets/props/dock.png" id="20_dock"]
-[ext_resource type="SpriteFrames" path="res://assets/effects/grass_tuft.tres" id="21_tuft"]
+[ext_resource type="PackedScene" path="res://scenes/props/pier.tscn" id="13_pier"]
+[ext_resource type="PackedScene" path="res://scenes/props/mooring_post.tscn" id="14_post"]
+[ext_resource type="PackedScene" path="res://scenes/props/catamaran.tscn" id="15_catamaran"]
+[ext_resource type="PackedScene" path="res://scenes/props/rowboat.tscn" id="16_rowboat"]
+[ext_resource type="PackedScene" path="res://scenes/props/house.tscn" id="17_house"]
+[ext_resource type="PackedScene" path="res://scenes/props/shop.tscn" id="18_shop"]
+[ext_resource type="PackedScene" path="res://scenes/props/palm.tscn" id="19_palm"]
+[ext_resource type="PackedScene" path="res://scenes/props/tree.tscn" id="20_tree"]
+[ext_resource type="PackedScene" path="res://scenes/props/bush.tscn" id="21_bush"]
+[ext_resource type="PackedScene" path="res://scenes/props/rock.tscn" id="22_rock"]
+[ext_resource type="PackedScene" path="res://scenes/props/grass_tuft.tscn" id="23_tuft"]
+[ext_resource type="PackedScene" path="res://scenes/props/crates.tscn" id="24_crates"]
+[ext_resource type="PackedScene" path="res://scenes/props/fishing_net.tscn" id="25_net"]
+[ext_resource type="PackedScene" path="res://scenes/props/lamp_post.tscn" id="26_lamp"]
+[ext_resource type="PackedScene" path="res://scenes/props/house_blue.tscn" id="27_house_blue"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("5_world")
@@ -52,91 +58,97 @@ bay_radius = 9.5
 y_sort_enabled = true
 
 [node name="Player" parent="Entities" instance=ExtResource("4_player")]
-position = Vector2(3104, 776)
+position = Vector2(3104, 784)
 
-[node name="Dock" type="Node2D" parent="Entities"]
-position = Vector2(3104, 1216)
-script = ExtResource("13_scenery")
-texture = ExtResource("20_dock")
-base_pad = 10
-collision_radius = 12.0
+[node name="Pier" parent="Entities" instance=ExtResource("13_pier")]
+position = Vector2(3040, 1328)
 
-[node name="Catamaran" type="Node2D" parent="Entities"]
-position = Vector2(3104, 1372)
-script = ExtResource("13_scenery")
-texture = ExtResource("14_catamaran")
-base_pad = 8
-bob_amount = 1.5
-bob_speed = 0.5
+[node name="MooringPost" parent="Entities" instance=ExtResource("14_post")]
+position = Vector2(3264, 1248)
 
-[node name="Rowboat" type="Node2D" parent="Entities"]
-position = Vector2(2816, 1382)
-script = ExtResource("13_scenery")
-texture = ExtResource("15_rowboat")
-base_pad = 6
-bob_amount = 1.0
-bob_speed = 0.7
+[node name="Catamaran" parent="Entities" instance=ExtResource("15_catamaran")]
+position = Vector2(2784, 1392)
 
-[node name="Palm1" type="Node2D" parent="Entities"]
+[node name="Rowboat" parent="Entities" instance=ExtResource("16_rowboat")]
+position = Vector2(3392, 1376)
+
+[node name="House" parent="Entities" instance=ExtResource("17_house")]
+position = Vector2(2720, 1040)
+
+[node name="Shop" parent="Entities" instance=ExtResource("18_shop")]
+position = Vector2(3424, 1072)
+
+[node name="HouseBlue" parent="Entities" instance=ExtResource("27_house_blue")]
+position = Vector2(3040, 1008)
+
+[node name="Crates" parent="Entities" instance=ExtResource("24_crates")]
+position = Vector2(3168, 1200)
+
+[node name="FishingNet" parent="Entities" instance=ExtResource("25_net")]
+position = Vector2(2944, 1184)
+
+[node name="LampPost" parent="Entities" instance=ExtResource("26_lamp")]
+position = Vector2(3328, 1216)
+
+[node name="Palm1" parent="Entities" instance=ExtResource("19_palm")]
 position = Vector2(2624, 1216)
-script = ExtResource("13_scenery")
-texture = ExtResource("16_palm")
-collision_radius = 5.0
 
-[node name="Palm2" type="Node2D" parent="Entities"]
+[node name="Palm2" parent="Entities" instance=ExtResource("19_palm")]
 position = Vector2(3648, 1216)
-script = ExtResource("13_scenery")
-texture = ExtResource("16_palm")
-collision_radius = 5.0
 
-[node name="Tree1" type="Node2D" parent="Entities"]
+[node name="Palm3" parent="Entities" instance=ExtResource("19_palm")]
+position = Vector2(2944, 1152)
+
+[node name="Palm4" parent="Entities" instance=ExtResource("19_palm")]
+position = Vector2(3328, 1184)
+
+[node name="Tree1" parent="Entities" instance=ExtResource("20_tree")]
 position = Vector2(2592, 720)
-script = ExtResource("13_scenery")
-texture = ExtResource("17_tree")
-collision_radius = 6.0
 
-[node name="Tree2" type="Node2D" parent="Entities"]
+[node name="Tree2" parent="Entities" instance=ExtResource("20_tree")]
 position = Vector2(3680, 624)
-script = ExtResource("13_scenery")
-texture = ExtResource("17_tree")
-collision_radius = 6.0
 
-[node name="Bush1" type="Node2D" parent="Entities"]
+[node name="Tree3" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(2848, 944)
+
+[node name="Tree4" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(3360, 912)
+
+[node name="Bush1" parent="Entities" instance=ExtResource("21_bush")]
 position = Vector2(2880, 896)
-script = ExtResource("13_scenery")
-texture = ExtResource("18_bush")
 
-[node name="Bush2" type="Node2D" parent="Entities"]
+[node name="Bush2" parent="Entities" instance=ExtResource("21_bush")]
 position = Vector2(3360, 1008)
-script = ExtResource("13_scenery")
-texture = ExtResource("18_bush")
 
-[node name="Tuft1" type="Node2D" parent="Entities"]
-position = Vector2(2976, 656)
-script = ExtResource("13_scenery")
-frames = ExtResource("21_tuft")
+[node name="Bush3" parent="Entities" instance=ExtResource("21_bush")]
+position = Vector2(2848, 1072)
 
-[node name="Tuft2" type="Node2D" parent="Entities"]
-position = Vector2(3296, 816)
-script = ExtResource("13_scenery")
-frames = ExtResource("21_tuft")
+[node name="Bush4" parent="Entities" instance=ExtResource("21_bush")]
+position = Vector2(3616, 1008)
 
-[node name="Tuft3" type="Node2D" parent="Entities"]
-position = Vector2(2720, 976)
-script = ExtResource("13_scenery")
-frames = ExtResource("21_tuft")
-
-[node name="Rock1" type="Node2D" parent="Entities"]
+[node name="Rock1" parent="Entities" instance=ExtResource("22_rock")]
 position = Vector2(1952, 976)
-script = ExtResource("13_scenery")
-texture = ExtResource("19_rock")
-collision_radius = 8.0
 
-[node name="Rock2" type="Node2D" parent="Entities"]
+[node name="Rock2" parent="Entities" instance=ExtResource("22_rock")]
 position = Vector2(4384, 848)
-script = ExtResource("13_scenery")
-texture = ExtResource("19_rock")
-collision_radius = 8.0
+
+[node name="Tuft1" parent="Entities" instance=ExtResource("23_tuft")]
+position = Vector2(2976, 656)
+
+[node name="Tuft2" parent="Entities" instance=ExtResource("23_tuft")]
+position = Vector2(3296, 816)
+
+[node name="Tuft3" parent="Entities" instance=ExtResource("23_tuft")]
+position = Vector2(2720, 976)
+
+[node name="Tuft4" parent="Entities" instance=ExtResource("23_tuft")]
+position = Vector2(3168, 976)
+
+[node name="Tuft5" parent="Entities" instance=ExtResource("23_tuft")]
+position = Vector2(2912, 848)
+
+[node name="Tuft6" parent="Entities" instance=ExtResource("23_tuft")]
+position = Vector2(3488, 816)
 
 [node name="Casting" type="Node2D" parent="."]
 script = ExtResource("6_casting")

@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/scenery.gd" id="1_scenery"]
+[ext_resource type="Texture2D" path="res://assets/props/rowboat.png" id="2_art"]
+
+[node name="Rowboat" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_scenery")
+sink = 4
+bob_amount = 1.5
+bob_speed = 0.5
+
+[node name="Sprite" type="Sprite2D" parent="."]
+centered = false
+offset = Vector2(-65.0, -71)
+texture = ExtResource("2_art")
