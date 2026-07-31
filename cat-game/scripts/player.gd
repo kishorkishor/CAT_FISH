@@ -42,8 +42,8 @@ const DIRECTIONS: PackedStringArray = [
 @export var frames_sprint: SpriteFrames
 ## Sprite offset that puts the upright cat's feet on the node origin.
 @export var offset_upright := Vector2(0, -19)
-## Same for the sprint set, which sits on a larger canvas.
-@export var offset_sprint := Vector2(0, -25)
+## Same for the sprint set, which sits on its own canvas size.
+@export var offset_sprint := Vector2(0, -16)
 
 @export_group("Isometric")
 ## Cells are twice as wide as they are tall. Without halving vertical movement,
