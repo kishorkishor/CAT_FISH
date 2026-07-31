@@ -22,6 +22,16 @@ func _ready() -> void:
 	var centre := Vector2i(_water.grid_size / 2, _water.grid_size / 2)
 	_player.position = _water.map_to_local(centre)
 	_set_camera_limits()
+	# Deferred: the farm and the buildings register themselves in their own
+	# _ready, and loading before that would restore into nothing.
+	if Game.resume_on_load:
+		Game.resume_on_load = false
+		call_deferred("_resume")
+
+
+func _resume() -> void:
+	if Game.load_game():
+		Events.notice.emit("welcome back - day %d" % Clock.day)
 
 
 ## Fence the camera to the painted water so the grey void never shows. The

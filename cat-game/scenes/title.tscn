@@ -1,0 +1,78 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/title.gd" id="1_title"]
+[ext_resource type="Texture2D" path="res://assets/ui/emblem.png" id="2_emblem"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sea"]
+bg_color = Color(0.06, 0.16, 0.24, 1)
+
+[node name="Title" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_title")
+
+[node name="Sea" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_sea")
+
+[node name="Rows" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -260.0
+offset_right = 170.0
+offset_bottom = 260.0
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Emblem" type="TextureRect" parent="Rows"]
+custom_minimum_size = Vector2(0, 200)
+texture = ExtResource("2_emblem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Rows"]
+theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+theme_override_font_sizes/font_size = 34
+horizontal_alignment = 1
+text = "Catamaran"
+
+[node name="Sub" type="Label" parent="Rows"]
+modulate = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+text = "Tides of Tuna"
+
+[node name="SavedLine" type="Label" parent="Rows"]
+unique_name_in_owner = true
+modulate = Color(0.72, 0.9, 0.9, 0.85)
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+text = "no voyage yet"
+
+[node name="Gap" type="Control" parent="Rows"]
+custom_minimum_size = Vector2(0, 16)
+
+[node name="Continue" type="Button" parent="Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 24
+text = "continue"
+
+[node name="NewGame" type="Button" parent="Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+theme_override_font_sizes/font_size = 24
+text = "new voyage"
+
+[node name="Quit" type="Button" parent="Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+theme_override_font_sizes/font_size = 20
+text = "quit"

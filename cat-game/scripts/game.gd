@@ -19,6 +19,9 @@ var rods: Array[RodData] = []
 ## save file can store ids instead of resource paths.
 var items: Dictionary = {}
 
+## Set by the title screen. The world reads it once on boot and then forgets.
+var resume_on_load := false
+
 var _farm: Node = null
 var _buildings: Node = null
 
@@ -154,6 +157,22 @@ func bag_value() -> int:
 
 
 # --- saving ----------------------------------------------------------------
+
+## Back to a blank voyage without restarting the process, so New Game after a
+## Continue does not inherit the old bag.
+func wipe() -> void:
+	money = 0
+	bag.clear()
+	rod = rods[0] if not rods.is_empty() else null
+	Clock.day = 1
+	Clock.hour = Clock.MORNING
+	Goals.index = 0
+	Goals.progress = 0
+	if FileAccess.file_exists(SAVE_PATH):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
+	Events.money_changed.emit(money)
+	Events.bag_changed.emit()
+
 
 func register_farm(farm: Node) -> void:
 	_farm = farm
