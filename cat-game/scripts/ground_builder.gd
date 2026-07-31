@@ -1,3 +1,4 @@
+@tool
 extends TileMapLayer
 ## Builds an island out of any 16-tile corner set.
 ##
@@ -9,26 +10,56 @@ extends TileMapLayer
 ## Corners sit on the lattice between cells, so cell (x, y) reads vertices (x, y),
 ## (x+1, y), (x, y+1) and (x+1, y+1). Deciding per vertex is what makes neighbouring
 ## cells agree on their shared edge.
+##
+## Runs in the editor as well as at runtime, so the island is visible and selectable
+## on the canvas instead of appearing only on play. Turn off auto_build to stop it
+## regenerating and paint the layer by hand.
 
 const SOURCE_ID := 0
 const COLS := 4
 
+## Regenerate whenever a setting changes. Uncheck to hand-paint - the script will
+## then leave whatever is on the layer alone.
+@export var auto_build: bool = true:
+	set(value):
+		auto_build = value
+		_refresh()
+
 ## Cells per side of the generated patch.
-@export var grid_size: int = 22
+@export var grid_size: int = 22:
+	set(value):
+		grid_size = max(1, value)
+		_refresh()
 
 ## Island radius in cells, measured from the centre of the patch.
-@export var island_radius: float = 8.0
+@export var island_radius: float = 8.0:
+	set(value):
+		island_radius = value
+		_refresh()
 
 ## Amplitude of the edge wobble, in cells. 0 gives a clean circle.
-@export var edge_wobble: float = 1.6
+@export var edge_wobble: float = 1.6:
+	set(value):
+		edge_wobble = value
+		_refresh()
 
 
 func _ready() -> void:
-	rebuild()
+	_refresh()
+
+
+func _refresh() -> void:
+	# Setters fire before the node is in the tree while a scene is loading.
+	if not is_node_ready():
+		return
+	if auto_build:
+		rebuild()
 
 
 func rebuild() -> void:
 	clear()
+	if tile_set == null:
+		return
 	for y in grid_size:
 		for x in grid_size:
 			var mask := _corner_mask(x, y)
