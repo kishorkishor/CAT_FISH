@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FishData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/fish_data.gd" id="1_fish"]
+
+[resource]
+script = ExtResource("1_fish")
+display_name = "mackerel"
+rarity = 0
+value = 5
+fight_strength = 0.45
+stamina = 8.0
+burst_frequency = 3.5
+burst_warning = 0.7
+safe_band_width = 0.4

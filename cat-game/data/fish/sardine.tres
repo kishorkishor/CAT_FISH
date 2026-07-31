@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FishData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/fish_data.gd" id="1_fish"]
+
+[resource]
+script = ExtResource("1_fish")
+display_name = "sardine"
+rarity = 0
+value = 3
+fight_strength = 0.35
+stamina = 6.0
+burst_frequency = 4.0
+burst_warning = 0.8
+safe_band_width = 0.45

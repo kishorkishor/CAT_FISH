@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FishData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/fish_data.gd" id="1_fish"]
+
+[resource]
+script = ExtResource("1_fish")
+display_name = "snapper"
+rarity = 1
+value = 12
+fight_strength = 0.6
+stamina = 10.0
+burst_frequency = 3.0
+burst_warning = 0.6
+safe_band_width = 0.35

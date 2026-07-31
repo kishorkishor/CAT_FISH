@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FishData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/fish_data.gd" id="1_fish"]
+
+[resource]
+script = ExtResource("1_fish")
+display_name = "tuna"
+rarity = 3
+value = 60
+fight_strength = 1.0
+stamina = 18.0
+burst_frequency = 2.5
+burst_warning = 0.4
+safe_band_width = 0.25

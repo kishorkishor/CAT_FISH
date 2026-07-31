@@ -63,6 +63,9 @@ const DIRECTIONS: PackedStringArray = [
 
 ## Set by the world when the cat is over water.
 var in_water := false
+## Set while something else owns the cat - casting a line, fighting a fish.
+## Input is ignored but physics keeps running, so the cat glides to a stop.
+var locked := false
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _shadow: Node2D = $Shadow
@@ -83,11 +86,15 @@ func _ready() -> void:
 	_sprite_rest_y = offset_upright.y
 
 
+func facing() -> String:
+	return _facing
+
+
 func _physics_process(delta: float) -> void:
-	var input := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var input := Vector2.ZERO if locked else Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var state := _resolve_state(input)
 
-	if Input.is_action_just_pressed("jump") and not is_jumping() and not in_water:
+	if not locked and Input.is_action_just_pressed("jump") and not is_jumping() and not in_water:
 		_jump_elapsed = 0.0
 		state = "jump"
 
