@@ -1,13 +1,17 @@
 extends SceneTree
 ## Asserts the animated open-water tile is wired through: the tileset carries the
 ## relocated tile with its frames, and the world actually paints it.
+##
+## Checks the Sea layer, because that is the one that draws open water now. The
+## sand_water set above it skips its empty cells so the sea shows through, which
+## means an animation on *that* set would never appear.
 
 func _initialize() -> void:
 	var failures := 0
-	var tile_set: TileSet = load("res://assets/tiles/sand_water.tres")
+	var tile_set: TileSet = load("res://assets/tiles/shallow_deep.tres")
 
 	if not tile_set.has_meta(&"open_coords"):
-		print("SKIP sand_water has no animation - nothing to check")
+		print("SKIP shallow_deep has no animation - nothing to check")
 		quit()
 		return
 
@@ -25,7 +29,7 @@ func _initialize() -> void:
 	var world := (load("res://scenes/world.tscn") as PackedScene).instantiate()
 	root.add_child(world)
 	await process_frame
-	var water: TileMapLayer = world.get_node("Water")
+	var water: TileMapLayer = world.get_node("Sea")
 	var centre := Vector2i(water.grid_size / 2, water.grid_size / 2)
 	var open_cell := Vector2i(-1, -1)
 	for step in range(1, water.grid_size / 2):
