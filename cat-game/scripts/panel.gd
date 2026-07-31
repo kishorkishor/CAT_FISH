@@ -11,6 +11,8 @@ const ROW_HEIGHT := 34
 @onready var _items: VBoxContainer = %Items
 @onready var _crops: VBoxContainer = %Crops
 @onready var _built: VBoxContainer = %Built
+@onready var _log: VBoxContainer = %Log
+@onready var _log_title: Label = %LogTitle
 @onready var _title: Label = %PanelTitle
 @onready var _wallet: Label = %Wallet
 
@@ -46,7 +48,7 @@ func toggle() -> void:
 func _rebuild() -> void:
 	_title.text = "%s   -   %s" % ["Tides of Tuna", Clock.clock_text()]
 	_wallet.text = "%d coins" % Game.money
-	for box in [_items, _crops, _built]:
+	for box in [_items, _crops, _built, _log]:
 		for child in box.get_children():
 			child.queue_free()
 
@@ -110,6 +112,8 @@ func _rebuild() -> void:
 		for name in counts:
 			_built.add_child(_line("%d %s" % [counts[name], name], ""))
 
+	_fill_log()
+
 
 func _row(item: ItemData, note: String) -> Control:
 	var row := HBoxContainer.new()
@@ -150,3 +154,39 @@ func _note(text: String) -> Control:
 	label.text = text
 	label.modulate = Color(1, 1, 1, 0.5)
 	return label
+
+
+## The log shows the gaps as well as the fills - an unseen fish is a silhouette
+## with its water named, which is the whole hook.
+func _fill_log() -> void:
+	var species := LogBook.all_species()
+	_log_title.text = "FISH LOG   %d / %d" % [LogBook.caught_count(), species.size()]
+	for fish in species:
+		var id: String = fish.item.id if fish.item != null else ""
+		var row := HBoxContainer.new()
+		row.custom_minimum_size.y = 34
+		var art := TextureRect.new()
+		art.texture = fish.sprite
+		art.custom_minimum_size = Vector2(56, 30)
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		var known := LogBook.seen(id)
+		art.modulate = Color.WHITE if known else Color(0, 0, 0, 0.55)
+		row.add_child(art)
+
+		var name := Label.new()
+		name.text = fish.display_name if known else "?"
+		name.custom_minimum_size.x = 150
+		if not known:
+			name.modulate = Color(1, 1, 1, 0.45)
+		row.add_child(name)
+
+		var detail := Label.new()
+		if known:
+			var entry: Dictionary = LogBook.entries[id]
+			detail.text = "x%d   best %.1fcm (day %d)" % [
+				entry["count"], entry["best"], entry["day"]]
+		else:
+			detail.text = "%s water" % ["", "shallow", "mid", "deep"][fish.min_depth]
+		detail.modulate = Color(1, 1, 1, 0.5)
+		row.add_child(detail)
+		_log.add_child(row)

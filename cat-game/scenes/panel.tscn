@@ -87,6 +87,19 @@ text = "BUILT"
 [node name="Built" type="VBoxContainer" parent="Card/Margin/Rows"]
 unique_name_in_owner = true
 
+[node name="LogTitle" type="Label" parent="Card/Margin/Rows"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(0.62, 0.86, 0.86, 1)
+theme_override_font_sizes/font_size = 19
+text = "FISH LOG"
+
+[node name="LogScroll" type="ScrollContainer" parent="Card/Margin/Rows"]
+custom_minimum_size = Vector2(0, 190)
+
+[node name="Log" type="VBoxContainer" parent="Card/Margin/Rows/LogScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
 [node name="Rule2" type="HSeparator" parent="Card/Margin/Rows"]
 
 [node name="Controls" type="Label" parent="Card/Margin/Rows"]
