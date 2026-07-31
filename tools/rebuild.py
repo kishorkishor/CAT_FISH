@@ -77,7 +77,7 @@ def sync_tiles(set_name: str) -> None:
     if not raw_dir.is_dir():
         raise SystemExit(f"no such tile set: {raw_dir}")
 
-    if atlas.exists() and atlas.stat().st_mtime > newest(raw_dir.glob("tile_*.png")):
+    if atlas.exists() and atlas.stat().st_mtime > newest(raw_dir.rglob("*.png")):
         # build_atlas.py always writes the atlas last, so it is normally the newer
         # file even when nothing was hand-edited. Report what actually moved rather
         # than which timestamp won, or every rebuild claims an edit that never happened.

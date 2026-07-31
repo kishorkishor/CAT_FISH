@@ -4,6 +4,12 @@ Also writes the measured tile geometry as JSON beside the atlas. Tile canvas siz
 changes whenever the generator's tile size or view angle changes, and a hardcoded
 guess mis-slices the atlas silently, so it gets measured rather than assumed.
 
+If raw/<set>/anim/frame_*.png exists, those frames are appended as one extra row
+below the 16 static tiles and recorded in the sidecar. Godot's tile animation
+wants its frames contiguous in the atlas, and a fresh bottom row is the one place
+they can sit without moving any of the 16 static cells. Without an anim folder
+the output is byte-identical to the old 4x4 atlas.
+
 Usage:  python build_atlas.py <raw_dir> <out_png>
 """
 import json
@@ -14,6 +20,7 @@ from PIL import Image
 
 COLS = 4
 ROWS = 4
+ANIM_FPS = 4
 
 
 def measure_isometric(im: Image.Image) -> dict:
@@ -71,18 +78,34 @@ def main() -> int:
         return 1
     tw, th = tiles[0].size
 
-    atlas = Image.new("RGBA", (COLS * tw, ROWS * th), (0, 0, 0, 0))
+    frames = []
+    for p in sorted((raw_dir / "anim").glob("frame_*.png")):
+        frame = Image.open(p).convert("RGBA")
+        if frame.size != (tw, th):
+            print(f"{p} is {frame.size}, tiles are {tw}x{th} - frames must match")
+            return 1
+        frames.append(frame)
+
+    cols = max(COLS, len(frames))
+    rows = ROWS + (1 if frames else 0)
+    atlas = Image.new("RGBA", (cols * tw, rows * th), (0, 0, 0, 0))
     for i, t in enumerate(tiles):
         atlas.paste(t, ((i % COLS) * tw, (i // COLS) * th))
+    for i, f in enumerate(frames):
+        atlas.paste(f, (i * tw, ROWS * th))
 
     out_png.parent.mkdir(parents=True, exist_ok=True)
     atlas.save(out_png)
 
     geom = measure_isometric(tiles[0])
+    if frames:
+        geom["anim_frames"] = len(frames)
+        geom["anim_row"] = ROWS
+        geom["anim_fps"] = ANIM_FPS
     out_json = out_png.with_suffix(".json")
     out_json.write_text(json.dumps(geom, indent=2))
 
-    print(f"{out_png}  atlas={atlas.size}  tile={tw}x{th}")
+    print(f"{out_png}  atlas={atlas.size}  tile={tw}x{th}  anim_frames={len(frames)}")
     print(f"{out_json}  cell={geom['cell_width']}x{geom['cell_height']}  "
           f"depth={geom['depth']}  origin_y={geom['texture_origin_y']}")
     return 0

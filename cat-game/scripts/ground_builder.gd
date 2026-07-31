@@ -97,12 +97,16 @@ func rebuild() -> void:
 	clear()
 	if tile_set == null:
 		return
+	# An animated tileset keeps its fully-secondary tile on the appended animation
+	# row rather than at (0,0); the tileset records where.
+	var open_coords: Vector2i = tile_set.get_meta(&"open_coords", Vector2i(0, 0))
 	for y in grid_size:
 		for x in grid_size:
 			var mask := _corner_mask(x, y)
 			if mask == 0 and skip_empty:
 				continue
-			set_cell(Vector2i(x, y), SOURCE_ID, Vector2i(mask % COLS, mask / COLS))
+			var coords := open_coords if mask == 0 else Vector2i(mask % COLS, mask / COLS)
+			set_cell(Vector2i(x, y), SOURCE_ID, coords)
 
 
 ## True where none of the cell's corners are the primary terrain, i.e. the cell is

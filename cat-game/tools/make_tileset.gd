@@ -38,13 +38,36 @@ func _initialize() -> void:
 	var cell := Vector2i(int(geom["cell_width"]), int(geom["cell_height"]))
 	var origin := Vector2i(0, int(geom["texture_origin_y"]))
 
+	# When the sidecar carries animation frames, tile 0 (the fully-secondary tile,
+	# open water on a shore set) moves to the animation row. Godot lays a tile's
+	# animation frames out contiguously from the tile's own atlas cell, and inside
+	# the 4x4 block every neighbouring cell is taken - the appended row is the one
+	# place a frame strip fits.
+	var anim_frames := int(geom.get("anim_frames", 0))
+	var anim_row := int(geom.get("anim_row", 4))
+	var anim_fps := float(geom.get("anim_fps", 4.0))
+
 	var source := TileSetAtlasSource.new()
 	source.texture = texture
 	source.texture_region_size = region
 	for i in TILE_COUNT:
+		if i == 0 and anim_frames > 0:
+			continue
 		var coords := Vector2i(i % COLS, i / COLS)
 		source.create_tile(coords)
 		var data := source.get_tile_data(coords, 0)
+		data.texture_origin = origin
+		data.y_sort_origin = y_sort
+
+	var open_coords := Vector2i(0, 0)
+	if anim_frames > 0:
+		open_coords = Vector2i(0, anim_row)
+		source.create_tile(open_coords)
+		source.set_tile_animation_columns(open_coords, 0)
+		source.set_tile_animation_frames_count(open_coords, anim_frames)
+		for f in anim_frames:
+			source.set_tile_animation_frame_duration(open_coords, f, 1.0 / anim_fps)
+		var data := source.get_tile_data(open_coords, 0)
 		data.texture_origin = origin
 		data.y_sort_origin = y_sort
 
@@ -54,6 +77,10 @@ func _initialize() -> void:
 	tile_set.tile_offset_axis = TileSet.TILE_OFFSET_AXIS_HORIZONTAL
 	tile_set.tile_size = cell
 	tile_set.add_source(source, 0)
+	if anim_frames > 0:
+		# The tileset itself records the relocation, so anything painting mask 0
+		# can ask instead of assuming (0,0).
+		tile_set.set_meta(&"open_coords", open_coords)
 
 	var err := ResourceSaver.save(tile_set, out_path)
 	if err != OK:
