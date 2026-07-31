@@ -9,11 +9,15 @@ extends SceneTree
 
 const COLS := 4
 const TILE_COUNT := 16
+const Y_SORT_ORIGIN := 0
 
 
 func _initialize() -> void:
 	var argv := OS.get_cmdline_user_args()
 	var set_name: String = argv[0] if argv.size() > 0 else "grass_sand"
+	# Where the tile sorts against characters standing on it. Without this the
+	# tile in front draws over a character's feet near a cell boundary.
+	var y_sort: int = int(argv[1]) if argv.size() > 1 else Y_SORT_ORIGIN
 
 	var atlas_path := "res://assets/tiles/%s_atlas.png" % set_name
 	var json_path := "res://assets/tiles/%s_atlas.json" % set_name
@@ -40,7 +44,9 @@ func _initialize() -> void:
 	for i in TILE_COUNT:
 		var coords := Vector2i(i % COLS, i / COLS)
 		source.create_tile(coords)
-		source.get_tile_data(coords, 0).texture_origin = origin
+		var data := source.get_tile_data(coords, 0)
+		data.texture_origin = origin
+		data.y_sort_origin = y_sort
 
 	var tile_set := TileSet.new()
 	tile_set.tile_shape = TileSet.TILE_SHAPE_ISOMETRIC
