@@ -46,8 +46,16 @@ const DIRECTIONS: PackedStringArray = [
 @export var offset_sprint := Vector2(0, -16)
 
 @export_group("Water")
+## How far the sprite sinks while wading through shin-deep water.
+@export var wade_sink: float = 3.0
 ## How far the sprite sinks while swimming, hiding the legs under the surface.
-@export var swim_sink: float = 6.0
+@export var swim_sink: float = 8.0
+## How far it sinks out in deep water, where only head and shoulders show.
+@export var deep_sink: float = 14.0
+## Pixels per second while wading. Water drags, so this is under walk_speed.
+@export var wade_speed: float = 95.0
+## Pixels per second out in the deep, where the cat has less to push against.
+@export var deep_speed: float = 70.0
 ## Where the water surface cuts the sprite, in node-local pixels. The node origin
 ## is the feet, which float at the surface while swimming, so 0 clips exactly
 ## there; negative values hide more of the body.
@@ -61,8 +69,14 @@ const DIRECTIONS: PackedStringArray = [
 ## ground reads as sliding under you.
 @export var iso_ratio: float = 0.5
 
-## Set by the world when the cat is over water.
-var in_water := false
+## How deep the water under the cat is, set by the world each frame. Mirrors
+## GroundBuilder.Depth: 0 land, 1 shallow, 2 mid, 3 deep.
+var water_depth := 0
+
+## True once the water is deep enough to swim in. Wading still counts as being on
+## foot, so the cat can hop over a shallow puddle but not out of the open sea.
+var in_water: bool:
+	get: return water_depth >= 2
 ## Set while something else owns the cat - casting a line, fighting a fish.
 ## Input is ignored but physics keeps running, so the cat glides to a stop.
 var locked := false
@@ -104,13 +118,18 @@ func _physics_process(delta: float) -> void:
 
 
 ## Swimming outranks everything: the cat cannot sprint or hop out of water.
+## Wading does not - shin-deep water is still walking, just slower and wetter.
 func _resolve_state(input: Vector2) -> String:
-	if in_water:
+	if water_depth >= 3:
+		return "deep"
+	if water_depth == 2:
 		return "swim"
 	if is_jumping():
 		return "jump"
 	if input == Vector2.ZERO:
-		return "idle"
+		return "wade_idle" if water_depth == 1 else "idle"
+	if water_depth == 1:
+		return "wade"
 	return "run" if Input.is_action_pressed("run") else "walk"
 
 
@@ -121,7 +140,9 @@ func _move(input: Vector2, state: String, delta: float) -> void:
 		var speed := walk_speed
 		match state:
 			"run": speed = run_speed
+			"wade", "wade_idle": speed = wade_speed
 			"swim": speed = swim_speed
+			"deep": speed = deep_speed
 		target = Vector2(input.x, input.y * iso_ratio) * speed
 
 	var rate := acceleration if target != Vector2.ZERO else friction
@@ -151,20 +172,18 @@ func _update_animation(input: Vector2, state: String) -> void:
 	if wanted_set == null:
 		return
 
-	# Swimming drops the sprite so the legs sit under the surface, and takes the
-	# ground shadow with it - there is no ground to cast onto. The waterline shader
-	# then erases whatever the sink pushed below the surface, so only the upper
-	# body shows above the water.
+	# Water sinks the sprite and the waterline shader erases whatever went under,
+	# so one set of art covers every depth: wading shows the cat from the shins up,
+	# swimming from the chest up, the open sea from the shoulders up. The ground
+	# shadow goes as soon as there is water under the cat rather than ground.
 	var base := offset_sprint if wanted_set == frames_sprint else offset_upright
-	if state == "swim":
-		base.y += swim_sink
-	_shadow.visible = state != "swim"
-	_sprite.material.set_shader_parameter(&"clip_enabled", state == "swim")
+	base.y += _sink_for(state)
+	_shadow.visible = water_depth == 0
+	_sprite.material.set_shader_parameter(&"clip_enabled", water_depth > 0)
 	_sprite.material.set_shader_parameter(&"waterline_y", waterline_y)
 
-	# A wake trails the cat only while it is actually swimming somewhere; idling
-	# in water leaves the surface still.
-	_ripple.visible = state == "swim" and velocity.length_squared() > ripple_min_speed_sq
+	# A wake trails the cat only while it is actually moving through water.
+	_ripple.visible = water_depth > 0 and velocity.length_squared() > ripple_min_speed_sq
 	if _ripple.visible and not _ripple.is_playing():
 		_ripple.play(&"default")
 
@@ -174,9 +193,18 @@ func _update_animation(input: Vector2, state: String) -> void:
 		_sprite.offset = base
 
 	# Fall back down the chain rather than erroring, so a state whose animation has
-	# not been generated yet still faces the right way instead of freezing.
+	# not been generated yet still faces the right way instead of freezing. Wading
+	# deliberately falls through to the walk cycle - the cat really is walking.
+	var chain := PackedStringArray(["%s_%s" % [state, _facing]])
+	match state:
+		"wade": chain.append("walk_%s" % _facing)
+		"wade_idle": chain.append("idle_%s" % _facing)
+		"deep": chain.append("swim_%s" % _facing)
+	chain.append("walk_%s" % _facing)
+	chain.append("idle_%s" % _facing)
+
 	var wanted := ""
-	for candidate in ["%s_%s" % [state, _facing], "walk_%s" % _facing, "idle_%s" % _facing]:
+	for candidate in chain:
 		if wanted_set.has_animation(candidate):
 			wanted = candidate
 			break
@@ -184,6 +212,14 @@ func _update_animation(input: Vector2, state: String) -> void:
 		return
 	if _sprite.animation != wanted:
 		_sprite.play(wanted)
+
+
+func _sink_for(state: String) -> float:
+	match state:
+		"wade", "wade_idle": return wade_sink
+		"swim": return swim_sink
+		"deep": return deep_sink
+	return 0.0
 
 
 ## Screen-space input mapped to one of eight facings. The vertical axis is

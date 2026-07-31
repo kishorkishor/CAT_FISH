@@ -11,6 +11,8 @@ extends Resource
 @export var value := 5
 ## Side-on portrait, shown when it is landed.
 @export var sprite: Texture2D
+## The bag entry this fish becomes once landed.
+@export var item: ItemData
 
 @export_group("Fight")
 ## How hard the fish pulls during a burst. Raises tension fast.

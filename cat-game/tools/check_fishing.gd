@@ -4,6 +4,7 @@ extends SceneTree
 
 var _caught := 0
 var _escaped := 0
+var _caught_id := ""
 
 
 func _initialize() -> void:
@@ -14,7 +15,9 @@ func _initialize() -> void:
 	# A CLI script compiles before the autoloads register, so the Events global
 	# is not visible here at compile time - fetch the node instead.
 	var events := root.get_node("Events")
-	events.fish_caught.connect(func(_f): _caught += 1)
+	events.fish_caught.connect(func(f):
+		_caught += 1
+		_caught_id = f.item.id if f.item != null else "")
 	events.fish_escaped.connect(func(): _escaped += 1)
 
 	var water: TileMapLayer = world.get_node("Water")
@@ -36,8 +39,11 @@ func _initialize() -> void:
 	await physics_frame
 
 	# --- Round 1: let it escape -------------------------------------------
+	# The rod is a tool now, so casting is "use" while it is the one in paw.
+	var interactor: Node2D = world.get_node("Interactor")
+	interactor.tool = Tools.ROD
 	var ev := InputEventAction.new()
-	ev.action = "cast"
+	ev.action = "use"
 	ev.pressed = true
 	casting._unhandled_input(ev)
 	var minigame: CanvasLayer = await _await_minigame(casting)
@@ -91,16 +97,23 @@ func _initialize() -> void:
 
 	# --- The loop closes: bag fills, selling turns it into coins -----------
 	var game := root.get_node("Game")
-	if game.bag.size() == 1 and game.bag_value() > 0:
-		print("ok   catch landed in the bag (worth %d)" % game.bag_value())
+	if not _caught_id.is_empty() and game.count_of(_caught_id) == 1:
+		print("ok   the %s landed in the bag (worth %d)" % [_caught_id, game.bag_value()])
 	else:
-		print("FAIL bag has %d fish" % game.bag.size())
+		print("FAIL catch not in the bag: id=%s count=%d" % [_caught_id, game.count_of(_caught_id)])
 		failures += 1
+	# The cat starts with seeds, so selling clears the catch and leaves the seeds.
+	var seeds_before: int = game.count_of("carrot_seed")
 	game.sell_all()
-	if game.money > 0 and game.bag.is_empty():
-		print("ok   sold the bag for %d coins" % game.money)
+	if game.money > 0 and game.count_of(_caught_id) == 0:
+		print("ok   sold the catch for %d coins" % game.money)
 	else:
-		print("FAIL sell: money=%d bag=%d" % [game.money, game.bag.size()])
+		print("FAIL sell: money=%d still holding %d" % [game.money, game.count_of(_caught_id)])
+		failures += 1
+	if game.count_of("carrot_seed") == seeds_before:
+		print("ok   selling kept the seeds")
+	else:
+		print("FAIL selling ate the seeds")
 		failures += 1
 
 	quit(failures)

@@ -7,3 +7,8 @@ signal fish_hooked
 signal fish_caught(fish: FishData)
 signal fish_escaped
 signal money_changed(total: int)
+signal bag_changed
+signal crop_harvested(crop: CropData, count: int)
+signal tool_changed(tool: int)
+signal notice(message: String)
+signal game_saved

@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3]
+[gd_scene load_steps=40 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
 [ext_resource type="TileSet" path="res://assets/tiles/grass_sand.tres" id="2_land"]
@@ -27,6 +27,22 @@
 [ext_resource type="PackedScene" path="res://scenes/props/fishing_net.tscn" id="25_net"]
 [ext_resource type="PackedScene" path="res://scenes/props/lamp_post.tscn" id="26_lamp"]
 [ext_resource type="PackedScene" path="res://scenes/props/house_blue.tscn" id="27_house_blue"]
+[ext_resource type="Script" path="res://scripts/farm.gd" id="28_farm"]
+[ext_resource type="Script" path="res://scripts/buildings.gd" id="29_buildings"]
+[ext_resource type="Script" path="res://scripts/interactor.gd" id="30_interactor"]
+[ext_resource type="Script" path="res://scripts/daylight.gd" id="31_daylight"]
+[ext_resource type="Resource" path="res://data/build/planter.tres" id="40_b"]
+[ext_resource type="Resource" path="res://data/build/lamp.tres" id="41_b"]
+[ext_resource type="Resource" path="res://data/build/cottage.tres" id="42_b"]
+[ext_resource type="Resource" path="res://data/build/stall.tres" id="43_b"]
+[ext_resource type="Resource" path="res://data/build/palm.tres" id="44_b"]
+[ext_resource type="Resource" path="res://data/build/bush.tres" id="45_b"]
+[ext_resource type="Resource" path="res://data/build/mooring.tres" id="46_b"]
+[ext_resource type="Resource" path="res://data/items/tomato_seed.tres" id="50_seed"]
+[ext_resource type="Resource" path="res://data/items/carrot_seed.tres" id="51_seed"]
+[ext_resource type="Resource" path="res://data/items/corn_seed.tres" id="52_seed"]
+[ext_resource type="Resource" path="res://data/items/herb_seed.tres" id="53_seed"]
+
 
 [node name="World" type="Node2D"]
 script = ExtResource("5_world")
@@ -53,6 +69,9 @@ skip_empty = true
 bay_depth = 9.0
 bay_angle_deg = 90.0
 bay_radius = 9.5
+
+[node name="Farm" type="Node2D" parent="." groups=["farm"]]
+script = ExtResource("28_farm")
 
 [node name="Entities" type="Node2D" parent="."]
 y_sort_enabled = true
@@ -149,6 +168,17 @@ position = Vector2(2912, 848)
 
 [node name="Tuft6" parent="Entities" instance=ExtResource("23_tuft")]
 position = Vector2(3488, 816)
+
+[node name="Buildings" type="Node2D" parent="."]
+script = ExtResource("29_buildings")
+catalogue = Array[Resource]([ExtResource("40_b"), ExtResource("41_b"), ExtResource("42_b"), ExtResource("43_b"), ExtResource("44_b"), ExtResource("45_b"), ExtResource("46_b")])
+
+[node name="Interactor" type="Node2D" parent="." groups=["interactor"]]
+script = ExtResource("30_interactor")
+starting_seeds = Array[Resource]([ExtResource("50_seed"), ExtResource("51_seed"), ExtResource("52_seed"), ExtResource("53_seed")])
+
+[node name="Daylight" type="CanvasModulate" parent="."]
+script = ExtResource("31_daylight")
 
 [node name="Casting" type="Node2D" parent="."]
 script = ExtResource("6_casting")

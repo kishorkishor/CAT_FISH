@@ -1,12 +1,14 @@
-[gd_resource type="Resource" script_class="FishData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="FishData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/fish_data.gd" id="1_fish"]
+[ext_resource type="Resource" path="res://data/items/tuna.tres" id="3_item"]
 [ext_resource type="Texture2D" path="res://assets/fish/tuna.png" id="2_sprite"]
 
 [resource]
 script = ExtResource("1_fish")
 display_name = "tuna"
 sprite = ExtResource("2_sprite")
+item = ExtResource("3_item")
 rarity = 3
 value = 60
 fight_strength = 1.0

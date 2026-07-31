@@ -23,6 +23,18 @@ extends Node2D
 		sink = value
 		_align()
 
+## Ground footprint in pixels, width by height. Zero leaves the prop walk-through.
+##
+## Solid props block along a diamond, not a circle: the ground is seen at a 2:1
+## isometric angle, so a round tree base covers twice as much screen width as
+## depth. A circle collider makes the cat stop a whole cell early when walking up
+## to a trunk and clip into it when walking along the shore, which is what "the
+## hitboxes are not well made" looks like from the inside.
+@export var footprint := Vector2.ZERO:
+	set(value):
+		footprint = value
+		_reshape()
+
 @export_group("Bob")
 ## Vertical drift in pixels, for things floating on water. 0 sits still.
 @export var bob_amount := 0.0
@@ -37,6 +49,39 @@ var _aligned_to: Resource = null
 func _ready() -> void:
 	y_sort_enabled = true
 	_align()
+	_reshape()
+
+
+## Writes the diamond into whatever CollisionPolygon2D the scene already carries,
+## so the collider stays a real, editable node rather than something conjured at
+## run time - but its shape comes from one number pair in the Inspector.
+func _reshape() -> void:
+	if not is_node_ready():
+		return
+	var poly := _polygon()
+	if poly == null:
+		return
+	if footprint == Vector2.ZERO:
+		poly.disabled = true
+		return
+	poly.disabled = false
+	var hw := footprint.x * 0.5
+	var hh := footprint.y * 0.5
+	# An octagon rather than a pure diamond: the cut corners let the cat slide
+	# along a wall instead of catching on a single point.
+	poly.polygon = PackedVector2Array([
+		Vector2(-hw, 0), Vector2(-hw * 0.5, -hh), Vector2(hw * 0.5, -hh),
+		Vector2(hw, 0), Vector2(hw * 0.5, hh), Vector2(-hw * 0.5, hh),
+	])
+
+
+func _polygon() -> CollisionPolygon2D:
+	for child in get_children():
+		if child is StaticBody2D:
+			for sub in child.get_children():
+				if sub is CollisionPolygon2D:
+					return sub
+	return null
 
 
 func _process(delta: float) -> void:
@@ -46,6 +91,7 @@ func _process(delta: float) -> void:
 		var art := _art()
 		if art != null and _source(art) != _aligned_to:
 			_align()
+			_reshape()
 		return
 	if bob_amount <= 0.0:
 		return

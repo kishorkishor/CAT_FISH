@@ -29,11 +29,21 @@ const CELL_STEP := {
 }
 
 
+@onready var _interactor: Node2D = _world.get_node("Interactor")
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("cast") and not _busy and not _player.in_water:
-		var cell := _find_water_ahead()
-		if cell.x >= 0:
-			_cast_to(cell)
+	# The rod is a tool like any other, so casting is the "use" verb while it is
+	# the one in paw. Wading is fine to cast from; swimming is not.
+	if not event.is_action_pressed("use") or _busy:
+		return
+	if _interactor.tool != Tools.ROD or _player.in_water:
+		return
+	var cell := _find_water_ahead()
+	if cell.x >= 0:
+		_cast_to(cell)
+	else:
+		Events.notice.emit("no water within reach")
 
 
 func _find_water_ahead() -> Vector2i:

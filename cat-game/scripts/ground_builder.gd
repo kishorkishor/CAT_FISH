@@ -116,6 +116,54 @@ func is_fully_secondary(cell: Vector2i) -> bool:
 	return _corner_mask(cell.x, cell.y) == 0
 
 
+enum Depth { LAND, SHALLOW, MID, DEEP }
+
+## How far past the shoreline, in cells, each depth band begins.
+@export_group("Depth")
+@export var shallow_until := 3.0:
+	set(value):
+		shallow_until = value
+		_refresh()
+@export var mid_until := 8.0:
+	set(value):
+		mid_until = value
+		_refresh()
+
+
+## How deep the water is over a cell, as a band rather than a raw number so the
+## player can key whole animations off it.
+##
+## Derived from the island shape rather than from a third tileset: the distance a
+## cell sits beyond the shoreline is already known, and reusing it means depth
+## costs no art and stays consistent when the island is resized in the Inspector.
+func depth_at(cell: Vector2i) -> Depth:
+	if not is_fully_secondary(cell):
+		return Depth.LAND
+	var past := _distance_past_shore(cell.x, cell.y)
+	if past < shallow_until:
+		return Depth.SHALLOW
+	if past < mid_until:
+		return Depth.MID
+	return Depth.DEEP
+
+
+## Cells between this one and the nearest shore, measured in the same weighted
+## space the island is built in so it does not read four times deeper east-west.
+func _distance_past_shore(x: int, y: int) -> float:
+	var centre := grid_size * 0.5
+	var v := Vector2(x + 0.5 - centre, (y + 0.5 - centre) * iso_ratio)
+	# Water is anywhere outside the island or inside the carved bay, so how far a
+	# cell sits from land is whichever of those two walls it is further from.
+	# Taking the nearer one instead lets a cell out in the open ocean be dragged
+	# back to ankle-deep just because it is nowhere near the harbour.
+	var outside := v.length() - island_radius
+	if bay_depth > 0.0:
+		var bay_centre := Vector2.from_angle(deg_to_rad(bay_angle_deg)) \
+			* (island_radius + bay_radius - bay_depth)
+		outside = maxf(outside, bay_radius - v.distance_to(bay_centre))
+	return maxf(0.0, outside)
+
+
 func _corner_mask(x: int, y: int) -> int:
 	var nw := 1 if _is_primary(x, y) else 0
 	var ne := 1 if _is_primary(x + 1, y) else 0

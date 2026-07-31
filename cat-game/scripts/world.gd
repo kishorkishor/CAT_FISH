@@ -48,4 +48,4 @@ func _set_camera_limits() -> void:
 
 func _physics_process(_delta: float) -> void:
 	var cell := _water.local_to_map(_water.to_local(_player.global_position))
-	_player.in_water = _water.is_fully_secondary(cell)
+	_player.water_depth = _water.depth_at(cell)

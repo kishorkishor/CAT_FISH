@@ -3,12 +3,10 @@
 [ext_resource type="Script" path="res://scripts/scenery.gd" id="1_scenery"]
 [ext_resource type="Texture2D" path="res://assets/props/house.png" id="2_art"]
 
-[sub_resource type="RectangleShape2D" id="Shape_house"]
-size = Vector2(92, 34)
-
 [node name="House" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
+footprint = Vector2(100, 50)
 
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false
@@ -17,6 +15,4 @@ texture = ExtResource("2_art")
 
 [node name="Solid" type="StaticBody2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Solid"]
-position = Vector2(0, -12)
-shape = SubResource("Shape_house")
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Solid"]
