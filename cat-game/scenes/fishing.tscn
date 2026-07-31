@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/fishing_minigame.gd" id="1_minigame"]
+[ext_resource type="SpriteFrames" path="res://assets/effects/yarn.tres" id="2_yarn"]
 
 [node name="Fishing" type="CanvasLayer"]
 layer = 10
@@ -50,6 +51,13 @@ offset_left = 14.0
 offset_right = 46.0
 offset_bottom = 200.0
 color = Color(0.5, 0.9, 0.5, 1)
+
+[node name="Yarn" type="AnimatedSprite2D" parent="TensionTrack"]
+unique_name_in_owner = true
+position = Vector2(30, 300)
+scale = Vector2(1.4, 1.4)
+sprite_frames = ExtResource("2_yarn")
+animation = &"default"
 
 [node name="Warning" type="Label" parent="."]
 unique_name_in_owner = true

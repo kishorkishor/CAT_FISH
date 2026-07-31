@@ -51,6 +51,7 @@ var _resolved := false
 @onready var _progress_fill: ColorRect = %ProgressFill
 @onready var _warning: Label = %Warning
 @onready var _title: Label = %Title
+@onready var _yarn: AnimatedSprite2D = %Yarn
 
 
 func start(data: FishData) -> void:
@@ -142,6 +143,14 @@ func _redraw(in_band: bool) -> void:
 	_tension_fill.color = Color(0.5, 0.9, 0.5) if in_band else Color(0.95, 0.55, 0.4)
 	if _fray > 0.0:
 		_tension_fill.color = Color(1.0, 0.3, 0.2)
+
+	# The yarn ball rides the line: it climbs with tension and comes apart as the
+	# line tightens, so the danger is legible without reading the bar.
+	_yarn.position.y = (1.0 - _tension) * h
+	var frames := _yarn.sprite_frames.get_frame_count(&"default")
+	if frames > 0:
+		_yarn.frame = clampi(int(_tension * frames), 0, frames - 1)
+	_yarn.modulate = Color(1, 1, 1) if in_band else Color(1.0, 0.72, 0.62)
 
 	_progress_fill.size.x = (1.0 - _distance) * %ProgressTrack.size.x
 	_warning.visible = _warning_left > 0.0 or _burst_left > 0.0

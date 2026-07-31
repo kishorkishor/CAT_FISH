@@ -1,15 +1,26 @@
 extends Node2D
-## The float. A grey-box stand-in: a pale dot that dips when a fish bites.
+## The float: bobs on the water while waiting, then dips hard when a fish bites.
+
+## Pixels the float rides up and down while nothing is biting.
+@export var idle_bob := 1.5
+## How far it is yanked under once something takes the bait.
+@export var bite_dip := 4.0
 
 var _biting := false
+var _time := 0.0
+
+@onready var _sprite: Sprite2D = $Sprite
 
 
 func bite() -> void:
 	_biting = true
-	queue_redraw()
 
 
-func _draw() -> void:
-	var y := 2.0 if _biting else 0.0
-	draw_circle(Vector2(0, y), 3.0, Color(0.95, 0.9, 0.8))
-	draw_circle(Vector2(0, y), 1.5, Color(0.85, 0.3, 0.25))
+func _process(delta: float) -> void:
+	_time += delta
+	if _biting:
+		# A quick stutter rather than a smooth ride - it should read as a fish
+		# pulling, not as the float drifting.
+		_sprite.position.y = bite_dip * (1.0 + sin(_time * 22.0)) * 0.5
+	else:
+		_sprite.position.y = sin(_time * 2.2) * idle_bob

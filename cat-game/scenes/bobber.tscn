@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/bobber.gd" id="1_bobber"]
+[ext_resource type="Texture2D" path="res://assets/props/bobber.png" id="2_art"]
 
 [node name="Bobber" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_bobber")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_art")

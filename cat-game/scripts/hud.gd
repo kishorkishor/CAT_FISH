@@ -5,6 +5,7 @@ extends CanvasLayer
 @onready var _bag: Label = %Bag
 @onready var _sell: Button = %Sell
 @onready var _banner: Label = %Banner
+@onready var _catch: TextureRect = %CatchPortrait
 
 
 func _ready() -> void:
@@ -13,7 +14,7 @@ func _ready() -> void:
 		_refresh())
 	Events.fish_caught.connect(func(fish: FishData):
 		_refresh()
-		_flash("caught a %s!" % fish.display_name))
+		_flash("caught a %s!" % fish.display_name, fish.sprite))
 	Events.fish_escaped.connect(func(): _flash("it got away..."))
 	Events.money_changed.connect(func(_total): _refresh())
 	_refresh()
@@ -25,11 +26,19 @@ func _refresh() -> void:
 	_sell.disabled = Game.bag.is_empty()
 
 
-func _flash(message: String) -> void:
+func _flash(message: String, portrait: Texture2D = null) -> void:
 	_banner.text = message
 	_banner.visible = true
 	_banner.modulate.a = 1.0
+	_catch.texture = portrait
+	_catch.visible = portrait != null
+	_catch.modulate.a = 1.0
 	var tween := create_tween()
-	tween.tween_interval(1.2)
+	tween.tween_interval(1.6)
+	tween.set_parallel()
 	tween.tween_property(_banner, "modulate:a", 0.0, 0.8)
-	tween.tween_callback(func(): _banner.visible = false)
+	tween.tween_property(_catch, "modulate:a", 0.0, 0.8)
+	tween.set_parallel(false)
+	tween.tween_callback(func():
+		_banner.visible = false
+		_catch.visible = false)

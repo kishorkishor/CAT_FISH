@@ -9,6 +9,8 @@ extends Resource
 @export_range(0, 3) var rarity := 0
 ## Coins when sold.
 @export var value := 5
+## Side-on portrait, shown when it is landed.
+@export var sprite: Texture2D
 
 @export_group("Fight")
 ## How hard the fish pulls during a burst. Raises tension fast.
