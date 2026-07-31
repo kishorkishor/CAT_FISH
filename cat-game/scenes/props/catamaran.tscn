@@ -6,6 +6,10 @@
 [node name="Catamaran" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
+label = "catamaran"
+hint = "moored - sailing comes later"
+action = ""
+interact_range = 70.0
 sink = 6
 bob_amount = 2.0
 bob_speed = 0.35

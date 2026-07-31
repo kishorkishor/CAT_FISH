@@ -41,6 +41,13 @@ func _process(_delta: float) -> void:
 	_clock.text = Clock.clock_text()
 	if _interactor == null or _farm == null:
 		return
+	# Whatever the cat has walked up to speaks first; the ground only gets a word
+	# in when there is nothing standing in front of it.
+	var focus_text: String = _interactor.prompt()
+	if not focus_text.is_empty() and _interactor.tool != Tools.BUILD:
+		_prompt.text = focus_text
+		return
+
 	# Say what the tool would do before it is used, so a miss is never a mystery.
 	var action: String = _farm.action_at(_interactor.target_cell(), _interactor.tool)
 	if _interactor.tool == Tools.BUILD:

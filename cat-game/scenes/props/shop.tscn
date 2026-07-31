@@ -6,7 +6,11 @@
 [node name="Shop" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
-footprint = Vector2(96, 48)
+footprint = Vector2(104, 52)
+label = "market stall"
+hint = "no keeper yet"
+action = "shop"
+interact_range = 60.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false

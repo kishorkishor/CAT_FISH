@@ -46,9 +46,47 @@ func _ready() -> void:
 			Game.add_item(item.id, 5)
 
 
+var _focus: Node2D = null
+
+
 func _process(_delta: float) -> void:
 	if tool == Tools.BUILD:
 		_buildings.move_ghost(cursor_cell())
+	_update_focus()
+
+
+## The nearest thing worth talking about, or null. Walking up to something is the
+## whole trigger - no aiming, no clicking - because that is the one interaction
+## that works identically on a keyboard and on a phone.
+func _update_focus() -> void:
+	var best: Node2D = null
+	var best_distance := INF
+	for prop in get_tree().get_nodes_in_group("interactable"):
+		var distance: float = prop.reach_from(_player.global_position)
+		if distance < prop.interact_range and distance < best_distance:
+			best = prop
+			best_distance = distance
+	if best == _focus:
+		return
+	if _focus != null and is_instance_valid(_focus):
+		_focus.highlight(false)
+	_focus = best
+	if _focus != null:
+		_focus.highlight(true)
+
+
+func focus() -> Node2D:
+	return _focus
+
+
+## What the HUD should say right now: whatever the cat is stood at wins over the
+## tile under its paws, because the thing it walked up to is what it meant.
+func prompt() -> String:
+	if _focus != null and is_instance_valid(_focus):
+		if _focus.hint.is_empty():
+			return _focus.label
+		return "%s  -  %s" % [_focus.label, _focus.hint]
+	return ""
 
 
 ## The cell the cat is standing on, stepped forward by its facing.
@@ -114,10 +152,23 @@ func _cycle() -> void:
 
 
 func _use() -> void:
+	# Something walked up to takes the press before the ground does - otherwise
+	# standing at the cottage door with a hoe tills the doorstep.
+	if tool != Tools.BUILD and _focus != null and is_instance_valid(_focus) \
+			and not _focus.action.is_empty():
+		_run(_focus.action)
+		return
 	match tool:
 		Tools.BUILD: _use_build()
 		Tools.ROD: pass   # casting owns the rod; see casting.gd
 		_: _use_on_ground()
+
+
+func _run(action: String) -> void:
+	match action:
+		"sleep": _sleep()
+		"shop": Events.notice.emit("the stall has no keeper yet")
+		"cast": Events.notice.emit("switch to the rod and press use")
 
 
 func _use_build() -> void:
@@ -181,16 +232,13 @@ func _hand(cell: Vector2i) -> void:
 	Events.notice.emit("planted %s" % item.display_name)
 
 
-## Sleeping only works indoors, which gives the cottage a job beyond scenery.
+## Sleeping only works at a cottage, which gives the buildings a job beyond
+## scenery. The cottage declares itself with action = "sleep"; nothing here
+## needs to know what a house is called.
 func _sleep() -> void:
-	var near_bed := false
-	for node in _world.get_node("Entities").get_children():
-		if node.name.begins_with("House") \
-				and node.global_position.distance_to(_player.global_position) < 90.0:
-			near_bed = true
-	if not near_bed:
+	if _focus == null or not is_instance_valid(_focus) or _focus.action != "sleep":
 		Events.notice.emit("no bed nearby")
 		return
 	Clock.sleep_until_morning()
 	Game.save_game()
-	Events.notice.emit("slept until morning")
+	Events.notice.emit("slept until morning - day %d" % Clock.day)

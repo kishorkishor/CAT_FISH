@@ -6,6 +6,10 @@
 [node name="Pier" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
+label = "pier"
+hint = "take the rod out to the end"
+action = "cast"
+interact_range = 90.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false

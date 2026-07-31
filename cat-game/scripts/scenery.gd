@@ -35,6 +35,16 @@ extends Node2D
 		footprint = value
 		_reshape()
 
+@export_group("Interaction")
+## What this is, shown when the cat walks up to it. Empty means it says nothing.
+@export var label := ""
+## What the cat could do here. Shown under the label.
+@export var hint := ""
+## Verb run when "use" is pressed in range. Empty means it is only scenery.
+@export_enum("none:", "sleep", "shop", "cast") var action := ""
+## How close the cat has to be, in pixels.
+@export var interact_range := 46.0
+
 @export_group("Bob")
 ## Vertical drift in pixels, for things floating on water. 0 sits still.
 @export var bob_amount := 0.0
@@ -50,6 +60,24 @@ func _ready() -> void:
 	y_sort_enabled = true
 	_align()
 	_reshape()
+	if not label.is_empty() and not Engine.is_editor_hint():
+		add_to_group("interactable")
+
+
+## Lift the art a shade while the cat is stood at it, so the thing the prompt is
+## talking about is never ambiguous when two props are close together.
+func highlight(on: bool) -> void:
+	var art := _art()
+	if art != null:
+		art.modulate = Color(1.35, 1.32, 1.15) if on else Color.WHITE
+
+
+## Distance from the cat to this prop's footprint, measured in the flattened
+## space the ground is drawn in - otherwise standing one cell north of a prop
+## reads as twice as far away as standing one cell east of it.
+func reach_from(point: Vector2) -> float:
+	var d := point - global_position
+	return Vector2(d.x, d.y * 2.0).length()
 
 
 ## Writes the diamond into whatever CollisionPolygon2D the scene already carries,
@@ -67,11 +95,17 @@ func _reshape() -> void:
 	poly.disabled = false
 	var hw := footprint.x * 0.5
 	var hh := footprint.y * 0.5
+	# The node origin is the art's lowest pixel, which on an isometric object is
+	# the *front corner* of its base diamond, not the middle of it. Centring the
+	# shape there puts half the collider in the open ground in front of the prop,
+	# so the cat bumps into nothing and walks through the back wall. Lifting it by
+	# a half-height seats the diamond on the footprint the art actually draws.
+	#
 	# An octagon rather than a pure diamond: the cut corners let the cat slide
 	# along a wall instead of catching on a single point.
 	poly.polygon = PackedVector2Array([
-		Vector2(-hw, 0), Vector2(-hw * 0.5, -hh), Vector2(hw * 0.5, -hh),
-		Vector2(hw, 0), Vector2(hw * 0.5, hh), Vector2(-hw * 0.5, hh),
+		Vector2(-hw, -hh), Vector2(-hw * 0.5, -footprint.y), Vector2(hw * 0.5, -footprint.y),
+		Vector2(hw, -hh), Vector2(hw * 0.5, 0), Vector2(-hw * 0.5, 0),
 	])
 
 

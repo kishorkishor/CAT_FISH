@@ -6,6 +6,10 @@
 [node name="Rowboat" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
+label = "rowboat"
+hint = "moored - sailing comes later"
+action = ""
+interact_range = 60.0
 sink = 4
 bob_amount = 1.5
 bob_speed = 0.5

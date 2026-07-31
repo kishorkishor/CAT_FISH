@@ -6,7 +6,11 @@
 [node name="HouseBlue" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
-footprint = Vector2(100, 50)
+footprint = Vector2(112, 56)
+label = "cottage"
+hint = "press E to sleep until morning"
+action = "sleep"
+interact_range = 62.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false

@@ -6,6 +6,10 @@
 [node name="FishingNet" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
+label = "fishing net"
+hint = "someone has been busy"
+action = ""
+interact_range = 40.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false

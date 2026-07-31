@@ -7,6 +7,10 @@
 y_sort_enabled = true
 script = ExtResource("1_scenery")
 footprint = Vector2(14, 7)
+label = "mooring post"
+hint = "for tying a boat up"
+action = ""
+interact_range = 38.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false
