@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
+[ext_resource type="TileSet" path="res://assets/tiles/grass_sand.tres" id="2_land"]
+[ext_resource type="Script" path="res://scripts/ground_builder.gd" id="3_ground"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="4_player"]
+[ext_resource type="Script" path="res://scripts/world.gd" id="5_world"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("5_world")
+
+[node name="Water" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = ExtResource("1_water")
+script = ExtResource("3_ground")
+grid_size = 30
+island_radius = 10.0
+edge_wobble = 1.8
+
+[node name="Land" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = ExtResource("2_land")
+script = ExtResource("3_ground")
+grid_size = 30
+island_radius = 7.0
+edge_wobble = 1.4
+skip_empty = true
+
+[node name="Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Player" parent="Entities" instance=ExtResource("4_player")]
+position = Vector2(960, 480)

@@ -43,6 +43,14 @@ const COLS := 4
 		edge_wobble = value
 		_refresh()
 
+## Leave cells with no primary terrain empty instead of filling them with the
+## secondary. Set on an upper layer so the layer beneath shows through - that is
+## what lets grass sit on sand which sits in water, from two 16-tile sets.
+@export var skip_empty: bool = false:
+	set(value):
+		skip_empty = value
+		_refresh()
+
 
 func _ready() -> void:
 	_refresh()
@@ -63,7 +71,16 @@ func rebuild() -> void:
 	for y in grid_size:
 		for x in grid_size:
 			var mask := _corner_mask(x, y)
+			if mask == 0 and skip_empty:
+				continue
 			set_cell(Vector2i(x, y), SOURCE_ID, Vector2i(mask % COLS, mask / COLS))
+
+
+## True where none of the cell's corners are the primary terrain, i.e. the cell is
+## entirely the second terrain the set was generated with. On the water layer that
+## means open water with no sand in it.
+func is_fully_secondary(cell: Vector2i) -> bool:
+	return _corner_mask(cell.x, cell.y) == 0
 
 
 func _corner_mask(x: int, y: int) -> int:

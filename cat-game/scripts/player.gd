@@ -45,6 +45,10 @@ const DIRECTIONS: PackedStringArray = [
 ## Same for the sprint set, which sits on its own canvas size.
 @export var offset_sprint := Vector2(0, -16)
 
+@export_group("Water")
+## How far the sprite sinks while swimming, hiding the legs under the surface.
+@export var swim_sink: float = 6.0
+
 @export_group("Isometric")
 ## Cells are twice as wide as they are tall. Without halving vertical movement,
 ## holding up crosses the island in half the time holding right does and the
@@ -55,6 +59,7 @@ const DIRECTIONS: PackedStringArray = [
 var in_water := false
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
+@onready var _shadow: Node2D = $Shadow
 
 var _facing := "south"
 var _jump_elapsed := -1.0
@@ -80,8 +85,8 @@ func _physics_process(delta: float) -> void:
 		state = "jump"
 
 	_move(input, state, delta)
-	_update_hop(delta)
 	_update_animation(input, state)
+	_update_hop(delta)
 
 
 ## Swimming outranks everything: the cat cannot sprint or hop out of water.
@@ -131,10 +136,18 @@ func _update_animation(input: Vector2, state: String) -> void:
 	var wanted_set := frames_sprint if state == "run" and frames_sprint != null else frames_upright
 	if wanted_set == null:
 		return
-	if _sprite.sprite_frames != wanted_set:
+
+	# Swimming drops the sprite so the legs sit under the surface, and takes the
+	# ground shadow with it - there is no ground to cast onto.
+	var base := offset_sprint if wanted_set == frames_sprint else offset_upright
+	if state == "swim":
+		base.y += swim_sink
+	_shadow.visible = state != "swim"
+
+	if _sprite.sprite_frames != wanted_set or not is_equal_approx(_sprite_rest_y, base.y):
 		_sprite.sprite_frames = wanted_set
-		_sprite_rest_y = (offset_sprint if wanted_set == frames_sprint else offset_upright).y
-		_sprite.offset = Vector2((offset_sprint if wanted_set == frames_sprint else offset_upright).x, _sprite_rest_y)
+		_sprite_rest_y = base.y
+		_sprite.offset = base
 
 	# Fall back down the chain rather than erroring, so a state whose animation has
 	# not been generated yet still faces the right way instead of freezing.
