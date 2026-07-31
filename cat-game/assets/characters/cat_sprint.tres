@@ -1,0 +1,77 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/characters/cat_sprint/rotations/east.png" id="1_fgbj3"]
+[ext_resource type="Texture2D" path="res://assets/characters/cat_sprint/rotations/north.png" id="2_hgk5k"]
+[ext_resource type="Texture2D" path="res://assets/characters/cat_sprint/rotations/north-east.png" id="3_8wmbv"]
+[ext_resource type="Texture2D" path="res://assets/characters/cat_sprint/rotations/north-west.png" id="4_uxgnb"]
+[ext_resource type="Texture2D" path="res://assets/characters/cat_sprint/rotations/south.png" id="5_f0gpi"]
+[ext_resource type="Texture2D" path="res://assets/characters/cat_sprint/rotations/south-east.png" id="6_2ymd1"]
+[ext_resource type="Texture2D" path="res://assets/characters/cat_sprint/rotations/south-west.png" id="7_3qitm"]
+[ext_resource type="Texture2D" path="res://assets/characters/cat_sprint/rotations/west.png" id="8_bpjgy"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_fgbj3")
+}],
+"loop": 1,
+"name": &"idle_east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_hgk5k")
+}],
+"loop": 1,
+"name": &"idle_north",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_8wmbv")
+}],
+"loop": 1,
+"name": &"idle_north-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_uxgnb")
+}],
+"loop": 1,
+"name": &"idle_north-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_f0gpi")
+}],
+"loop": 1,
+"name": &"idle_south",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_2ymd1")
+}],
+"loop": 1,
+"name": &"idle_south-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_3qitm")
+}],
+"loop": 1,
+"name": &"idle_south-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_bpjgy")
+}],
+"loop": 1,
+"name": &"idle_west",
+"speed": 10.0
+}]

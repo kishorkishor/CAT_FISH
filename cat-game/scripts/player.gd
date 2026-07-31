@@ -1,12 +1,15 @@
 extends CharacterBody2D
-## Eight-direction movement with walk, run and a hop.
+## Eight-direction movement with walk, run, swim and a hop.
 ##
-## Everything tunable is exported, so speeds, the hop and the run threshold can be
+## Everything tunable is exported, so speeds, the hop and the sprite sets can be
 ## dialled in from the Inspector while the game is running rather than by editing
 ## this file.
+##
+## Running swaps to a whole different sprite set, because a cat on four legs is a
+## separate rig rather than another animation of the upright one. The two sets sit
+## on different canvas sizes, so each carries its own offset to keep the feet on
+## the ground through the swap.
 
-## Cardinal names in clockwise order starting at south, matching the order the
-## sprite sheets are generated in.
 const DIRECTIONS: PackedStringArray = [
 	"south", "south-west", "west", "north-west",
 	"north", "north-east", "east", "south-east",
@@ -17,6 +20,8 @@ const DIRECTIONS: PackedStringArray = [
 @export var walk_speed: float = 150.0
 ## Pixels per second while run is held.
 @export var run_speed: float = 300.0
+## Pixels per second in water.
+@export var swim_speed: float = 90.0
 ## How quickly the cat reaches full speed. Lower is floatier.
 @export var acceleration: float = 1800.0
 ## How quickly it stops once input ends.
@@ -30,14 +35,26 @@ const DIRECTIONS: PackedStringArray = [
 ## Allow steering while airborne.
 @export var air_control: bool = true
 
+@export_group("Sprites")
+## Upright cat: idle, walk, jump.
+@export var frames_upright: SpriteFrames
+## Four-legged cat, used while running.
+@export var frames_sprint: SpriteFrames
+## Sprite offset that puts the upright cat's feet on the node origin.
+@export var offset_upright := Vector2(0, -19)
+## Same for the sprint set, which sits on a larger canvas.
+@export var offset_sprint := Vector2(0, -25)
+
 @export_group("Isometric")
 ## Cells are twice as wide as they are tall. Without halving vertical movement,
 ## holding up crosses the island in half the time holding right does and the
 ## ground reads as sliding under you.
 @export var iso_ratio: float = 0.5
 
+## Set by the world when the cat is over water.
+var in_water := false
+
 @onready var _sprite: AnimatedSprite2D = $Sprite
-@onready var _shadow: Node2D = $Shadow
 
 var _facing := "south"
 var _jump_elapsed := -1.0
@@ -49,26 +66,44 @@ func is_jumping() -> bool:
 
 
 func _ready() -> void:
-	_sprite_rest_y = _sprite.position.y
+	if frames_upright == null:
+		frames_upright = _sprite.sprite_frames
+	_sprite_rest_y = offset_upright.y
 
 
 func _physics_process(delta: float) -> void:
 	var input := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var running := Input.is_action_pressed("run")
+	var state := _resolve_state(input)
 
-	if Input.is_action_just_pressed("jump") and not is_jumping():
+	if Input.is_action_just_pressed("jump") and not is_jumping() and not in_water:
 		_jump_elapsed = 0.0
+		state = "jump"
 
-	_move(input, running, delta)
+	_move(input, state, delta)
 	_update_hop(delta)
-	_update_animation(input, running)
+	_update_animation(input, state)
 
 
-func _move(input: Vector2, running: bool, delta: float) -> void:
+## Swimming outranks everything: the cat cannot sprint or hop out of water.
+func _resolve_state(input: Vector2) -> String:
+	if in_water:
+		return "swim"
+	if is_jumping():
+		return "jump"
+	if input == Vector2.ZERO:
+		return "idle"
+	return "run" if Input.is_action_pressed("run") else "walk"
+
+
+func _move(input: Vector2, state: String, delta: float) -> void:
 	var steerable := air_control or not is_jumping()
 	var target := Vector2.ZERO
 	if steerable and input != Vector2.ZERO:
-		target = Vector2(input.x, input.y * iso_ratio) * (run_speed if running else walk_speed)
+		var speed := walk_speed
+		match state:
+			"run": speed = run_speed
+			"swim": speed = swim_speed
+		target = Vector2(input.x, input.y * iso_ratio) * speed
 
 	var rate := acceleration if target != Vector2.ZERO else friction
 	velocity = velocity.move_toward(target, rate * delta)
@@ -83,35 +118,32 @@ func _update_hop(delta: float) -> void:
 	_jump_elapsed += delta
 	if _jump_elapsed >= jump_time:
 		_jump_elapsed = -1.0
-		_sprite.position.y = _sprite_rest_y
+		_sprite.offset.y = _sprite_rest_y
 		return
-	# Parabola peaking at the halfway point.
 	var t := _jump_elapsed / jump_time
-	_sprite.position.y = _sprite_rest_y - jump_height * 4.0 * t * (1.0 - t)
+	_sprite.offset.y = _sprite_rest_y - jump_height * 4.0 * t * (1.0 - t)
 
 
-func _update_animation(input: Vector2, running: bool) -> void:
+func _update_animation(input: Vector2, state: String) -> void:
 	if input != Vector2.ZERO:
 		_facing = _direction_name(input)
 
-	var state := "idle"
-	if is_jumping():
-		state = "jump"
-	elif input != Vector2.ZERO:
-		state = "run" if running else "walk"
-
-	var frames := _sprite.sprite_frames
-	if frames == null:
+	var wanted_set := frames_sprint if state == "run" and frames_sprint != null else frames_upright
+	if wanted_set == null:
 		return
+	if _sprite.sprite_frames != wanted_set:
+		_sprite.sprite_frames = wanted_set
+		_sprite_rest_y = (offset_sprint if wanted_set == frames_sprint else offset_upright).y
+		_sprite.offset = Vector2((offset_sprint if wanted_set == frames_sprint else offset_upright).x, _sprite_rest_y)
 
-	# Fall back down the chain rather than erroring, so a character with only its
-	# rotations generated still faces the right way while the animations are queued.
-	var wanted := "%s_%s" % [state, _facing]
+	# Fall back down the chain rather than erroring, so a state whose animation has
+	# not been generated yet still faces the right way instead of freezing.
+	var wanted := ""
 	for candidate in ["%s_%s" % [state, _facing], "walk_%s" % _facing, "idle_%s" % _facing]:
-		if frames.has_animation(candidate):
+		if wanted_set.has_animation(candidate):
 			wanted = candidate
 			break
-	if not frames.has_animation(wanted):
+	if wanted.is_empty():
 		return
 	if _sprite.animation != wanted:
 		_sprite.play(wanted)
