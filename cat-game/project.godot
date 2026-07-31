@@ -23,6 +23,7 @@ Weather="*res://scripts/weather.gd"
 Game="*res://scripts/game.gd"
 Goals="*res://scripts/goals.gd"
 LogBook="*res://scripts/log_book.gd"
+Tackle="*res://scripts/tackle.gd"
 
 [display]
 

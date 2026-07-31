@@ -19,6 +19,10 @@ var tool: int = Tools.HAND:
 		_buildings.clear_ghost()
 		if tool == Tools.BUILD:
 			_buildings.show_ghost(current_build())
+		# Purely cosmetic, but it is the one place the game shows what the cat is
+		# actually carrying rather than telling you in a corner of the screen.
+		if _player != null:
+			_player.holding_rod = tool == Tools.ROD
 		Events.tool_changed.emit(tool)
 
 ## Set by the touch UI when it takes over. Build placement follows the cursor on
@@ -151,6 +155,9 @@ func _cycle() -> void:
 		build_index += 1
 		_buildings.show_ghost(current_build())
 		Events.notice.emit(current_build().display_name if current_build() else "nothing to build")
+	elif tool == Tools.ROD:
+		Tackle.cycle()
+		Events.notice.emit("on the hook: %s" % Tackle.name_of())
 	elif tool == Tools.HAND:
 		seed_index += 1
 		var s := current_seed()

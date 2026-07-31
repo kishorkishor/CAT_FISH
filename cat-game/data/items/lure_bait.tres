@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_s"]
+[ext_resource type="Texture2D" path="res://assets/ui/rod_master.png" id="2_i"]
+
+[resource]
+script = ExtResource("1_s")
+id = "lure_bait"
+display_name = "silver lure"
+value = 13
+price = 40
+icon = ExtResource("2_i")

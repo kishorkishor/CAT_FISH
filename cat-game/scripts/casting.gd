@@ -60,7 +60,8 @@ func _find_water_ahead() -> Vector2i:
 		if not _water.is_fully_secondary(cell):
 			continue
 		var depth: int = _water.depth_at(cell)
-		if depth <= Game.rod.max_depth + Weather.depth_bonus() and depth > best_depth:
+		var reach: int = Game.rod.max_depth + Weather.depth_bonus() + Tackle.depth_bonus_of(Tackle.bait)
+		if depth <= reach and depth > best_depth:
 			best = cell
 			best_depth = depth
 	return best
@@ -83,12 +84,14 @@ func _cast_to(cell: Vector2i) -> void:
 	add_child(minigame)
 	minigame.caught.connect(func(_fish): _finish())
 	minigame.escaped.connect(_finish)
-	minigame.start(_pick_fish(_water.depth_at(cell) + Weather.depth_bonus()))
+	var used := Tackle.consume()
+	minigame.start(_pick_fish(_water.depth_at(cell) + Weather.depth_bonus()
+		+ Tackle.depth_bonus_of(used), Tackle.richness_of(used)))
 
 
 ## Only fish that live at this depth or shallower will bite, and the rarer ones
 ## live further out. That single rule is what a new rod actually buys.
-func _pick_fish(depth: int) -> FishData:
+func _pick_fish(depth: int, richness := 0.0) -> FishData:
 	var here: Array[FishData] = []
 	for fish in fish_pool:
 		if fish != null and fish.min_depth <= depth:
@@ -98,9 +101,11 @@ func _pick_fish(depth: int) -> FishData:
 		return fish_pool[0]
 	here.sort_custom(func(a, b): return a.value < b.value)
 	# Squaring the roll biases towards the cheap end, so the good fish stay a
-	# reward rather than the default.
+	# reward rather than the default. Bait straightens that curve: at full
+	# richness the roll is flat and every fish present is equally likely.
 	var roll := _rng.randf()
-	return here[int(roll * roll * here.size())]
+	var biased: float = lerpf(roll * roll, roll, richness)
+	return here[mini(int(biased * here.size()), here.size() - 1)]
 
 
 func _finish() -> void:

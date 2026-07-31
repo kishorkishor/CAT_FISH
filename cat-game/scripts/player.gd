@@ -40,6 +40,9 @@ const DIRECTIONS: PackedStringArray = [
 @export var frames_upright: SpriteFrames
 ## Four-legged cat, used while running.
 @export var frames_sprint: SpriteFrames
+## The cat carrying its rod, used whenever the rod is the tool in paw. Same rig
+## and canvas as the upright set, so it shares offset_upright.
+@export var frames_rod: SpriteFrames
 ## Sprite offset that puts the upright cat's feet on the node origin.
 @export var offset_upright := Vector2(0, -19)
 ## Same for the sprint set, which sits on its own canvas size.
@@ -77,6 +80,10 @@ var water_depth := 0
 ## foot, so the cat can hop over a shallow puddle but not out of the open sea.
 var in_water: bool:
 	get: return water_depth >= 2
+## Set by the interactor when the rod is the held tool, so the cat is drawn
+## carrying it. Purely cosmetic; nothing about movement changes.
+var holding_rod := false
+
 ## Set while something else owns the cat - casting a line, fighting a fish.
 ## Input is ignored but physics keeps running, so the cat glides to a stop.
 var locked := false
@@ -168,7 +175,13 @@ func _update_animation(input: Vector2, state: String) -> void:
 	if input != Vector2.ZERO:
 		_facing = _direction_name(input)
 
-	var wanted_set := frames_sprint if state == "run" and frames_sprint != null else frames_upright
+	var wanted_set := frames_upright
+	if state == "run" and frames_sprint != null:
+		wanted_set = frames_sprint
+	elif holding_rod and frames_rod != null and water_depth < 2:
+		# Dropped in deep water: the swim frames only exist on the upright set,
+		# and a cat treading water is not carrying a rod anyway.
+		wanted_set = frames_rod
 	if wanted_set == null:
 		return
 

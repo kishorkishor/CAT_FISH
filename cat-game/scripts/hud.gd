@@ -100,7 +100,9 @@ func _refresh() -> void:
 		_slots[i].scale = Vector2.ONE if held else Vector2(0.82, 0.82)
 	if _interactor != null:
 		var extra := ""
-		if _interactor.tool == Tools.HAND:
+		if _interactor.tool == Tools.ROD:
+			extra = "  -  %s" % Tackle.name_of()
+		elif _interactor.tool == Tools.HAND:
 			var s: ItemData = _interactor.current_seed()
 			extra = "  -  %s x%d" % [s.display_name, Game.count_of(s.id)] if s != null else "  -  no seeds"
 		_tool.text = "%s%s" % [Tools.NAMES[_interactor.tool], extra]
