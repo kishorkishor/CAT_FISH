@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
 [ext_resource type="TileSet" path="res://assets/tiles/grass_sand.tres" id="2_land"]
@@ -11,6 +11,7 @@
 [ext_resource type="Resource" path="res://data/fish/snapper.tres" id="9_snapper"]
 [ext_resource type="Resource" path="res://data/fish/grouper.tres" id="10_grouper"]
 [ext_resource type="Resource" path="res://data/fish/tuna.tres" id="11_tuna"]
+[ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="12_hud"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("5_world")
@@ -47,3 +48,5 @@ position = Vector2(3104, 776)
 [node name="Casting" type="Node2D" parent="."]
 script = ExtResource("6_casting")
 fish_pool = Array[Resource]([ExtResource("7_sardine"), ExtResource("8_mackerel"), ExtResource("9_snapper"), ExtResource("10_grouper"), ExtResource("11_tuna")])
+
+[node name="HUD" parent="." instance=ExtResource("12_hud")]

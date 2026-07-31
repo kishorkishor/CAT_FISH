@@ -89,6 +89,20 @@ func _initialize() -> void:
 		print("FAIL not cleaned up after catch")
 		failures += 1
 
+	# --- The loop closes: bag fills, selling turns it into coins -----------
+	var game := root.get_node("Game")
+	if game.bag.size() == 1 and game.bag_value() > 0:
+		print("ok   catch landed in the bag (worth %d)" % game.bag_value())
+	else:
+		print("FAIL bag has %d fish" % game.bag.size())
+		failures += 1
+	game.sell_all()
+	if game.money > 0 and game.bag.is_empty():
+		print("ok   sold the bag for %d coins" % game.money)
+	else:
+		print("FAIL sell: money=%d bag=%d" % [game.money, game.bag.size()])
+		failures += 1
+
 	quit(failures)
 
 
