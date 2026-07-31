@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PROJECT = ROOT / "cat-game"
 TILES = PROJECT / "assets" / "tiles"
 CHARACTERS = PROJECT / "assets" / "characters"
+EFFECTS = PROJECT / "assets" / "effects"
 MANIFEST = ROOT / "characters.json"
 
 GODOT = Path(os.environ.get(
@@ -63,6 +64,13 @@ def character_names():
                   if p.is_dir() and (p / "rotations").is_dir())
 
 
+def effect_names():
+    if not EFFECTS.is_dir():
+        return []
+    return sorted(p.name for p in EFFECTS.iterdir()
+                  if p.is_dir() and any(p.glob("frame_*.png")))
+
+
 def sync_tiles(set_name: str) -> None:
     raw_dir = TILES / "raw" / set_name
     atlas = TILES / f"{set_name}_atlas.png"
@@ -100,8 +108,9 @@ def main() -> int:
 
     all_tiles = tile_sets()
     all_characters = character_names()
+    all_effects = effect_names()
     if not args or "--all" in flags:
-        targets = all_tiles + all_characters
+        targets = all_tiles + all_characters + all_effects
     else:
         targets = args
 
@@ -111,6 +120,8 @@ def main() -> int:
         elif name in all_characters:
             if "--fetch" in flags:
                 fetch_character(name)
+        elif name in all_effects:
+            pass  # effect frames are dropped in directly; the import below picks them up
         else:
             raise SystemExit(f"unknown target: {name}")
 
@@ -124,6 +135,9 @@ def main() -> int:
         elif name in all_characters:
             print(godot("--script", "res://tools/make_spriteframes.gd", "--", name, "10",
                         label="make_spriteframes").strip().splitlines()[-1])
+        elif name in all_effects:
+            print(godot("--script", "res://tools/make_effect.gd", "--", name, "8",
+                        label="make_effect").strip().splitlines()[-1])
 
     print("ready")
     return 0

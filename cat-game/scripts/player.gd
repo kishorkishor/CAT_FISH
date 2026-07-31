@@ -48,6 +48,12 @@ const DIRECTIONS: PackedStringArray = [
 @export_group("Water")
 ## How far the sprite sinks while swimming, hiding the legs under the surface.
 @export var swim_sink: float = 6.0
+## Where the water surface cuts the sprite, in node-local pixels. The node origin
+## is the feet, which float at the surface while swimming, so 0 clips exactly
+## there; negative values hide more of the body.
+@export var waterline_y: float = 0.0
+## The ripple only shows once the cat is actually moving, in squared px/s.
+@export var ripple_min_speed_sq: float = 100.0
 
 @export_group("Isometric")
 ## Cells are twice as wide as they are tall. Without halving vertical movement,
@@ -60,6 +66,7 @@ var in_water := false
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _shadow: Node2D = $Shadow
+@onready var _ripple: AnimatedSprite2D = $Ripple
 
 var _facing := "south"
 var _jump_elapsed := -1.0
@@ -138,11 +145,21 @@ func _update_animation(input: Vector2, state: String) -> void:
 		return
 
 	# Swimming drops the sprite so the legs sit under the surface, and takes the
-	# ground shadow with it - there is no ground to cast onto.
+	# ground shadow with it - there is no ground to cast onto. The waterline shader
+	# then erases whatever the sink pushed below the surface, so only the upper
+	# body shows above the water.
 	var base := offset_sprint if wanted_set == frames_sprint else offset_upright
 	if state == "swim":
 		base.y += swim_sink
 	_shadow.visible = state != "swim"
+	_sprite.material.set_shader_parameter(&"clip_enabled", state == "swim")
+	_sprite.material.set_shader_parameter(&"waterline_y", waterline_y)
+
+	# A wake trails the cat only while it is actually swimming somewhere; idling
+	# in water leaves the surface still.
+	_ripple.visible = state == "swim" and velocity.length_squared() > ripple_min_speed_sq
+	if _ripple.visible and not _ripple.is_playing():
+		_ripple.play(&"default")
 
 	if _sprite.sprite_frames != wanted_set or not is_equal_approx(_sprite_rest_y, base.y):
 		_sprite.sprite_frames = wanted_set

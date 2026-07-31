@@ -1,11 +1,19 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
 [ext_resource type="SpriteFrames" path="res://assets/characters/cat.tres" id="2_frames"]
 [ext_resource type="SpriteFrames" path="res://assets/characters/cat_sprint.tres" id="3_sprint"]
+[ext_resource type="Shader" path="res://shaders/waterline_clip.gdshader" id="4_clip"]
+[ext_resource type="SpriteFrames" path="res://assets/effects/ripple.tres" id="5_ripple"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_body"]
 radius = 6.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_clip"]
+resource_local_to_scene = true
+shader = ExtResource("4_clip")
+shader_parameter/clip_enabled = false
+shader_parameter/waterline_y = 0.0
 
 [node name="Player" type="CharacterBody2D"]
 y_sort_enabled = true
@@ -17,7 +25,13 @@ frames_sprint = ExtResource("3_sprint")
 color = Color(0, 0, 0, 0.22)
 polygon = PackedVector2Array(-9, 0, -6, -3, 6, -3, 9, 0, 6, 3, -6, 3)
 
+[node name="Ripple" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = ExtResource("5_ripple")
+animation = &"default"
+
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_clip")
 sprite_frames = ExtResource("2_frames")
 animation = &"idle_south"
 autoplay = "idle_south"
