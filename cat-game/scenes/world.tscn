@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3]
+[gd_scene load_steps=53 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
 [ext_resource type="TileSet" path="res://assets/tiles/shallow_deep.tres" id="33_sea"]
@@ -53,6 +53,7 @@
 [ext_resource type="Resource" path="res://data/items/carrot_seed.tres" id="51_seed"]
 [ext_resource type="Resource" path="res://data/items/corn_seed.tres" id="52_seed"]
 [ext_resource type="Resource" path="res://data/items/herb_seed.tres" id="53_seed"]
+[ext_resource type="Resource" path="res://data/items/lemon_seed.tres" id="54_seed"]
 
 
 [node name="World" type="Node2D"]

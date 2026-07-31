@@ -19,7 +19,9 @@ from PIL import Image
 
 # How tall each stage stands relative to the ripe plant.
 DEFAULT_SCALES = [0.55, 0.72, 0.88, 1.0]
-CANVAS = 48
+# Ground crops share one small canvas; a fruit tree needs a taller one. Measured
+# from the ripe stage rather than fixed, so a new plant of any height just works.
+CANVAS_PAD = 4
 
 
 def main() -> int:
@@ -40,8 +42,11 @@ def main() -> int:
             return 1
         inks.append(im.crop(box))
 
-    # The ripe stage sets the size everything else is measured against.
+    # The ripe stage sets the size everything else is measured against, and the
+    # canvas is sized to hold it.
     full_h = inks[-1].height
+    canvas_w = max(i.width for i in inks) + CANVAS_PAD * 2
+    canvas_h = full_h + CANVAS_PAD
     out_dir = crop_dir.parent.parent / "crops_built" / crop_dir.name
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -51,8 +56,8 @@ def main() -> int:
         target_w = max(6, int(round(ink.width * target_h / ink.height)))
         scaled = ink.resize((target_w, target_h), Image.NEAREST)
 
-        canvas = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
-        canvas.paste(scaled, ((CANVAS - target_w) // 2, CANVAS - target_h), scaled)
+        canvas = Image.new("RGBA", (canvas_w, canvas_h), (0, 0, 0, 0))
+        canvas.paste(scaled, ((canvas_w - target_w) // 2, canvas_h - target_h), scaled)
         canvas.save(out_dir / f"stage_{i}.png")
         report.append(f"{target_w}x{target_h}")
 
