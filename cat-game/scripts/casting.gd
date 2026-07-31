@@ -43,17 +43,27 @@ func _unhandled_input(event: InputEvent) -> void:
 	if cell.x >= 0:
 		_cast_to(cell)
 	else:
-		Events.notice.emit("no water within reach")
+		Events.notice.emit("no water within reach of the %s" % Game.rod.display_name)
 
 
+## The deepest water the rod can reach, looking ahead from the cat. Deliberately
+## the *deepest* rather than the nearest: with a good rod you want the line out
+## past the shallows, and having to stand in exactly the right spot to get there
+## would be fiddly rather than skilful.
 func _find_water_ahead() -> Vector2i:
 	var start := _water.local_to_map(_water.to_local(_player.global_position))
 	var step: Vector2i = CELL_STEP.get(_player.facing(), Vector2i(0, 2))
-	for i in range(1, cast_range + 1):
+	var best := Vector2i(-1, -1)
+	var best_depth := 0
+	for i in range(1, Game.rod.cast_range + 1):
 		var cell := start + step * i
-		if _water.is_fully_secondary(cell):
-			return cell
-	return Vector2i(-1, -1)
+		if not _water.is_fully_secondary(cell):
+			continue
+		var depth: int = _water.depth_at(cell)
+		if depth <= Game.rod.max_depth and depth > best_depth:
+			best = cell
+			best_depth = depth
+	return best
 
 
 func _cast_to(cell: Vector2i) -> void:
@@ -73,17 +83,24 @@ func _cast_to(cell: Vector2i) -> void:
 	add_child(minigame)
 	minigame.caught.connect(func(_fish): _finish())
 	minigame.escaped.connect(_finish)
-	minigame.start(_pick_fish())
+	minigame.start(_pick_fish(_water.depth_at(cell)))
 
 
-func _pick_fish() -> FishData:
-	if fish_pool.is_empty():
-		push_error("casting has no fish_pool")
-		return FishData.new()
-	# Squaring the roll biases towards index 0, so the head of the list is the
-	# common catch without a separate weight table yet.
+## Only fish that live at this depth or shallower will bite, and the rarer ones
+## live further out. That single rule is what a new rod actually buys.
+func _pick_fish(depth: int) -> FishData:
+	var here: Array[FishData] = []
+	for fish in fish_pool:
+		if fish != null and fish.min_depth <= depth:
+			here.append(fish)
+	if here.is_empty():
+		push_error("no fish live at depth %d" % depth)
+		return fish_pool[0]
+	here.sort_custom(func(a, b): return a.value < b.value)
+	# Squaring the roll biases towards the cheap end, so the good fish stay a
+	# reward rather than the default.
 	var roll := _rng.randf()
-	return fish_pool[int(roll * roll * fish_pool.size())]
+	return here[int(roll * roll * here.size())]
 
 
 func _finish() -> void:

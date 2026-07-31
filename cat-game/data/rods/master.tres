@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RodData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/rod_data.gd" id="1_s"]
+[ext_resource type="Texture2D" path="res://assets/ui/rod_master.png" id="2_i"]
+
+[resource]
+script = ExtResource("1_s")
+id = "master"
+display_name = "master rod"
+icon = ExtResource("2_i")
+price = 650
+tier = 2
+band_bonus = 0.12
+max_depth = 3
+cast_range = 9

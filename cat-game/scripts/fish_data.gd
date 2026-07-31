@@ -13,6 +13,10 @@ extends Resource
 @export var sprite: Texture2D
 ## The bag entry this fish becomes once landed.
 @export var item: ItemData
+## Shallowest water this fish will take a hook in: 1 shallow, 2 mid, 3 deep.
+## Together with the rod's max_depth this is the whole progression - a better rod
+## reaches further out, and further out is where the money is.
+@export_range(1, 3) var min_depth := 1
 
 @export_group("Fight")
 ## How hard the fish pulls during a burst. Raises tension fast.

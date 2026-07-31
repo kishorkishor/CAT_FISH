@@ -16,3 +16,4 @@ stamina = 14.0
 burst_frequency = 4.5
 burst_warning = 0.5
 safe_band_width = 0.3
+min_depth = 2

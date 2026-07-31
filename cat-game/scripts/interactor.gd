@@ -167,7 +167,7 @@ func _use() -> void:
 func _run(action: String) -> void:
 	match action:
 		"sleep": _sleep()
-		"shop": Events.notice.emit("the stall has no keeper yet")
+		"shop": _world.get_node("Shop").open()
 		"cast": Events.notice.emit("switch to the rod and press use")
 
 

@@ -1,20 +1,20 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/scenery.gd" id="1_scenery"]
-[ext_resource type="Texture2D" path="res://assets/props/shop.png" id="2_art"]
+[ext_resource type="Texture2D" path="res://assets/props/shopkeeper.png" id="2_art"]
 
-[node name="Shop" type="Node2D"]
+[node name="Shopkeeper" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
-footprint = Vector2(104, 52)
-label = "market stall"
+footprint = Vector2(16, 8)
+label = "Marla the trader"
 hint = "press E to trade"
 action = "shop"
-interact_range = 60.0
+interact_range = 52.0
 
 [node name="Sprite" type="Sprite2D" parent="."]
 centered = false
-offset = Vector2(-79.5, -147)
+offset = Vector2(-19.0, -48)
 texture = ExtResource("2_art")
 
 [node name="Solid" type="StaticBody2D" parent="."]

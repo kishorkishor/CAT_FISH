@@ -78,7 +78,8 @@ func _process(delta: float) -> void:
 		_tension += strength * delta
 	_tension = clampf(_tension, 0.0, 1.0)
 
-	var half: float = fish.safe_band_width * 0.5
+	var band: float = fish.safe_band_width + Game.rod.band_bonus
+	var half: float = band * 0.5
 	var in_band := absf(_tension - _band_centre) <= half
 
 	if in_band and holding:
@@ -131,8 +132,11 @@ func _resolve(landed: bool) -> void:
 func _layout_band() -> void:
 	var track: ColorRect = %TensionTrack
 	var h := track.size.y
-	_band.size.y = fish.safe_band_width * h
-	_band.position.y = (1.0 - (_band_centre + fish.safe_band_width * 0.5)) * h
+	# The rod is what makes the band wider, so the upgrade is visible the
+	# moment a fish is hooked rather than only in the numbers.
+	var band: float = fish.safe_band_width + Game.rod.band_bonus
+	_band.size.y = band * h
+	_band.position.y = (1.0 - (_band_centre + band * 0.5)) * h
 
 
 func _redraw(in_band: bool) -> void:

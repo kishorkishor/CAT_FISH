@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RodData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/rod_data.gd" id="1_s"]
+[ext_resource type="Texture2D" path="res://assets/ui/rod_bamboo.png" id="2_i"]
+
+[resource]
+script = ExtResource("1_s")
+id = "bamboo"
+display_name = "bamboo rod"
+icon = ExtResource("2_i")
+price = 0
+tier = 0
+band_bonus = 0.0
+max_depth = 1
+cast_range = 5

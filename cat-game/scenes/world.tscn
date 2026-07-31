@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3]
+[gd_scene load_steps=44 format=3]
 
 [ext_resource type="TileSet" path="res://assets/tiles/sand_water.tres" id="1_water"]
 [ext_resource type="TileSet" path="res://assets/tiles/shallow_deep.tres" id="33_sea"]
@@ -14,6 +14,8 @@
 [ext_resource type="Resource" path="res://data/fish/tuna.tres" id="11_tuna"]
 [ext_resource type="PackedScene" path="res://scenes/hud.tscn" id="12_hud"]
 [ext_resource type="PackedScene" path="res://scenes/panel.tscn" id="32_panel"]
+[ext_resource type="PackedScene" path="res://scenes/shop.tscn" id="34_shop"]
+[ext_resource type="PackedScene" path="res://scenes/props/shopkeeper.tscn" id="35_keeper"]
 [ext_resource type="PackedScene" path="res://scenes/props/pier.tscn" id="13_pier"]
 [ext_resource type="PackedScene" path="res://scenes/props/mooring_post.tscn" id="14_post"]
 [ext_resource type="PackedScene" path="res://scenes/props/catamaran.tscn" id="15_catamaran"]
@@ -111,6 +113,9 @@ position = Vector2(2720, 1040)
 [node name="Shop" parent="Entities" instance=ExtResource("18_shop")]
 position = Vector2(3424, 1072)
 
+[node name="Shopkeeper" parent="Entities" instance=ExtResource("35_keeper")]
+position = Vector2(3424, 1104)
+
 [node name="HouseBlue" parent="Entities" instance=ExtResource("27_house_blue")]
 position = Vector2(3040, 1008)
 
@@ -201,3 +206,5 @@ fish_pool = Array[Resource]([ExtResource("7_sardine"), ExtResource("8_mackerel")
 [node name="HUD" parent="." instance=ExtResource("12_hud")]
 
 [node name="Panel" parent="." instance=ExtResource("32_panel")]
+
+[node name="Shop" parent="." instance=ExtResource("34_shop")]

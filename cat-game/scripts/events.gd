@@ -10,5 +10,6 @@ signal money_changed(total: int)
 signal bag_changed
 signal crop_harvested(crop: CropData, count: int)
 signal tool_changed(tool: int)
+signal rod_changed(rod: RodData)
 signal notice(message: String)
 signal game_saved

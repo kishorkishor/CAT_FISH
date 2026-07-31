@@ -10,6 +10,10 @@ const SAVE_VERSION := 1
 var money := 0
 ## item id -> count.
 var bag: Dictionary = {}
+## The rod in paw. Set from the catalogue at boot, then bought upwards.
+var rod: RodData = null
+## Every rod in the game, lowest tier first.
+var rods: Array[RodData] = []
 
 ## Every item in the game, by id. Filled from res://data/items at boot so the
 ## save file can store ids instead of resource paths.
@@ -31,6 +35,39 @@ func _load_catalogue() -> void:
 		var item: ItemData = load(path)
 		if item != null and not item.id.is_empty():
 			items[item.id] = item
+	for path in _tres_under("res://data/rods"):
+		var r: RodData = load(path)
+		if r != null:
+			rods.append(r)
+	rods.sort_custom(func(a, b): return a.tier < b.tier)
+	if rod == null and not rods.is_empty():
+		rod = rods[0]
+
+
+## The next rung up, or null at the top. The shop never shows a rod two tiers
+## away: the ladder is meant to be climbed, not skipped.
+func next_rod() -> RodData:
+	for r in rods:
+		if r.tier == rod.tier + 1:
+			return r
+	return null
+
+
+func buy_rod(r: RodData) -> bool:
+	if r == null or r.tier != rod.tier + 1 or not spend(r.price):
+		return false
+	rod = r
+	Events.rod_changed.emit(rod)
+	return true
+
+
+func sellable_count() -> int:
+	var n := 0
+	for id in bag:
+		var item: ItemData = items.get(id)
+		if item != null and item.plants == null:
+			n += bag[id]
+	return n
 
 
 func _tres_under(dir_path: String) -> PackedStringArray:
@@ -131,6 +168,7 @@ func save_game() -> void:
 		"money": money,
 		"bag": bag,
 		"day": Clock.day,
+		"rod": rod.id if rod != null else "",
 		"hour": Clock.hour,
 		"farm": _farm.to_save() if _farm != null else [],
 		"buildings": _buildings.to_save() if _buildings != null else [],
@@ -156,6 +194,11 @@ func load_game() -> bool:
 	for id in parsed.get("bag", {}):
 		bag[id] = int(parsed["bag"][id])
 	Clock.day = int(parsed.get("day", 1))
+	var rod_id: String = parsed.get("rod", "")
+	for r in rods:
+		if r.id == rod_id:
+			rod = r
+	Events.rod_changed.emit(rod)
 	Clock.hour = float(parsed.get("hour", Clock.MORNING))
 	if _farm != null:
 		_farm.from_save(parsed.get("farm", []))

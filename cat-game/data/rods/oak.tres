@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RodData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/rod_data.gd" id="1_s"]
+[ext_resource type="Texture2D" path="res://assets/ui/rod_oak.png" id="2_i"]
+
+[resource]
+script = ExtResource("1_s")
+id = "oak"
+display_name = "oak rod"
+icon = ExtResource("2_i")
+price = 180
+tier = 1
+band_bonus = 0.06
+max_depth = 2
+cast_range = 7

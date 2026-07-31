@@ -1,0 +1,78 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/shop.gd" id="1_shop"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stall"]
+bg_color = Color(0.14, 0.1, 0.08, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.72, 0.45, 0.3, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Shop" type="CanvasLayer"]
+layer = 21
+script = ExtResource("1_shop")
+
+[node name="Dim" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.6)
+
+[node name="Card" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 90.0
+offset_right = -24.0
+offset_bottom = -90.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_stall")
+
+[node name="Margin" type="MarginContainer" parent="Card"]
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="Body" type="VBoxContainer" parent="Card/Margin"]
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Card/Margin/Body"]
+
+[node name="Title" type="Label" parent="Card/Margin/Body/Header"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Marla's stall"
+
+[node name="ShopWallet" type="Label" parent="Card/Margin/Body/Header"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(1, 0.87, 0.42, 1)
+theme_override_font_sizes/font_size = 24
+text = "0 coins"
+
+[node name="Rule" type="HSeparator" parent="Card/Margin/Body"]
+
+[node name="Scroll" type="ScrollContainer" parent="Card/Margin/Body"]
+size_flags_vertical = 3
+
+[node name="Rows" type="VBoxContainer" parent="Card/Margin/Body/Scroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="ShopNote" type="Label" parent="Card/Margin/Body"]
+unique_name_in_owner = true
+theme_override_colors/font_color = Color(0.72, 1, 0.72, 1)
+theme_override_font_sizes/font_size = 18
+text = ""
+
+[node name="Close" type="Label" parent="Card/Margin/Body"]
+modulate = Color(1, 1, 1, 0.55)
+theme_override_font_sizes/font_size = 16
+text = "Esc to leave"
