@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://xo2a0q4b3fx4"
-path="res://.godot/imported/cat_south_slim.png-0c67f65fe2629002accedd9edf20f271.ctex"
+uid="uid://bwwqfoqrfb00e"
+path="res://.godot/imported/frame_001.png-b44d3baee006e72e19bad2f4368006ea.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/cat_south_slim.png"
-dest_files=["res://.godot/imported/cat_south_slim.png-0c67f65fe2629002accedd9edf20f271.ctex"]
+source_file="res://assets/characters/cat/walk/west/frame_001.png"
+dest_files=["res://.godot/imported/frame_001.png-b44d3baee006e72e19bad2f4368006ea.ctex"]
 
 [params]
 
