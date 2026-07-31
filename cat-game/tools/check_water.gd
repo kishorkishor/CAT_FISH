@@ -11,7 +11,7 @@ func _initialize() -> void:
 
 	var centre := Vector2i(water.grid_size / 2, water.grid_size / 2)
 	var last := ""
-	for step in range(0, 16):
+	for step in range(0, water.grid_size / 2):
 		var cell := centre + Vector2i(step, step)
 		player.global_position = water.map_to_local(cell)
 		await physics_frame

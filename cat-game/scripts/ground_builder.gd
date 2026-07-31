@@ -43,12 +43,41 @@ const COLS := 4
 		edge_wobble = value
 		_refresh()
 
+## Vertical weight on the island shape. The stacked layout steps 64px across but
+## only 16px down, so a circle in cell coordinates renders four times wider than
+## tall. Weighting the vertical distance by 0.5 stretches the shape down the grid
+## until it reads as the 2:1 ellipse a circle should be in isometric. 1.0 gives
+## the old pancake.
+@export var iso_ratio: float = 0.5:
+	set(value):
+		iso_ratio = clampf(value, 0.1, 1.0)
+		_refresh()
+
 ## Leave cells with no primary terrain empty instead of filling them with the
 ## secondary. Set on an upper layer so the layer beneath shows through - that is
 ## what lets grass sit on sand which sits in water, from two 16-tile sets.
 @export var skip_empty: bool = false:
 	set(value):
 		skip_empty = value
+		_refresh()
+
+@export_group("Bay")
+## How far the bay bites into the coastline, in cells. 0 leaves the island whole.
+@export var bay_depth: float = 0.0:
+	set(value):
+		bay_depth = max(0.0, value)
+		_refresh()
+
+## Compass direction of the harbour mouth, in degrees. 0 points along +X.
+@export var bay_angle_deg: float = 25.0:
+	set(value):
+		bay_angle_deg = value
+		_refresh()
+
+## Radius of the carved bay circle, in cells.
+@export var bay_radius: float = 6.0:
+	set(value):
+		bay_radius = max(0.0, value)
 		_refresh()
 
 
@@ -93,8 +122,19 @@ func _corner_mask(x: int, y: int) -> int:
 
 ## True where the vertex is inside the island. Deterministic on purpose - the same
 ## patch every run, so a rendering change is never confused with a new random island.
+##
+## The bay is a second circle subtracted from the first. Its centre sits at
+## island_radius + bay_radius - bay_depth from the middle, so it always straddles
+## the coastline: depth controls the bite without ever swallowing the centre.
 func _is_primary(vx: int, vy: int) -> bool:
 	var centre := grid_size * 0.5
-	var dist := Vector2(vx - centre, vy - centre).length()
+	var v := Vector2(vx - centre, (vy - centre) * iso_ratio)
 	var wobble := sin(vx * 0.9) * 0.5 + cos(vy * 0.7) * 0.5
-	return dist + wobble * edge_wobble < island_radius
+	if v.length() + wobble * edge_wobble >= island_radius:
+		return false
+	if bay_depth > 0.0:
+		var bay_centre := Vector2.from_angle(deg_to_rad(bay_angle_deg)) \
+			* (island_radius + bay_radius - bay_depth)
+		if v.distance_to(bay_centre) + wobble * edge_wobble < bay_radius:
+			return false
+	return true

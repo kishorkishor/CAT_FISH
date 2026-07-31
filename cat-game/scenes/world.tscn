@@ -13,21 +13,27 @@ script = ExtResource("5_world")
 y_sort_enabled = true
 tile_set = ExtResource("1_water")
 script = ExtResource("3_ground")
-grid_size = 30
-island_radius = 10.0
+grid_size = 96
+island_radius = 23.0
 edge_wobble = 1.8
+bay_depth = 9.0
+bay_angle_deg = 90.0
+bay_radius = 8.0
 
 [node name="Land" type="TileMapLayer" parent="."]
 y_sort_enabled = true
 tile_set = ExtResource("2_land")
 script = ExtResource("3_ground")
-grid_size = 30
-island_radius = 7.0
+grid_size = 96
+island_radius = 20.0
 edge_wobble = 1.4
 skip_empty = true
+bay_depth = 9.0
+bay_angle_deg = 90.0
+bay_radius = 9.5
 
 [node name="Entities" type="Node2D" parent="."]
 y_sort_enabled = true
 
 [node name="Player" parent="Entities" instance=ExtResource("4_player")]
-position = Vector2(960, 480)
+position = Vector2(3104, 776)
