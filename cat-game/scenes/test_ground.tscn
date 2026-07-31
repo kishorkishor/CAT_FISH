@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://scripts/test_ground.gd" id="4_root"]
 
 [node name="TestGround" type="Node2D"]
-y_sort_enabled = true
 script = ExtResource("4_root")
 
 [node name="Ground" type="TileMapLayer" parent="."]
@@ -14,5 +13,8 @@ y_sort_enabled = true
 tile_set = ExtResource("1_tileset")
 script = ExtResource("2_ground")
 
-[node name="Player" parent="." instance=ExtResource("3_player")]
+[node name="Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Player" parent="Entities" instance=ExtResource("3_player")]
 position = Vector2(768, 192)
