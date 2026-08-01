@@ -12,6 +12,7 @@ signal crop_harvested(crop: CropData, count: int)
 signal tool_changed(tool: int)
 signal rod_changed(rod: RodData)
 signal crop_planted(crop: CropData)
+signal tree_felled(crop: CropData, wood: int)
 signal sold(amount: int)
 signal built(entry: BuildEntry)
 signal slept

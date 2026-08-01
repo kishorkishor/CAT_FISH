@@ -15,3 +15,8 @@ extends Resource
 @export var price := 0
 ## Planting this sows the crop it points at.
 @export var plants: Resource
+## Using this on tilled soil feeds it instead of sowing.
+@export var fertilises := false
+## Kept back by the sell-everything button. Seeds and materials are things you
+## are saving up, and one careless press should not empty the shed.
+@export var keep := false

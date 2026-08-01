@@ -52,12 +52,12 @@ func _rebuild() -> void:
 					_flash("the %s is yours" % next.display_name)
 					_rebuild()))
 
-	# --- seeds -------------------------------------------------------------
-	_rows.add_child(_heading("SEEDS"))
+	# --- seeds and supplies -------------------------------------------------
+	_rows.add_child(_heading("SEEDS AND SUPPLIES"))
 	var seeds := []
 	for id in Game.items:
 		var item: ItemData = Game.items[id]
-		if item.plants != null and item.price > 0:
+		if (item.plants != null or item.fertilises) and item.price > 0:
 			seeds.append(item)
 	seeds.sort_custom(func(a, b): return a.price < b.price)
 	for item in seeds:

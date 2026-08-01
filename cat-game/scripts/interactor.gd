@@ -110,11 +110,14 @@ func cursor_cell() -> Vector2i:
 	return _ground.local_to_map(_ground.to_local(_ground.get_global_mouse_position()))
 
 
+## Everything the paw can put into the ground: seed packets and fertiliser. They
+## share a cycle because they share a slot - you are stood at a plot deciding
+## what to give it, and having to change tool between the two would be busywork.
 func seeds() -> Array:
 	var out := []
 	for id in Game.bag:
 		var item: ItemData = Game.items.get(id)
-		if item != null and item.plants != null:
+		if item != null and (item.plants != null or item.fertilises):
 			out.append(item)
 	out.sort_custom(func(a, b): return a.id < b.id)
 	return out
@@ -221,6 +224,13 @@ func _use_on_ground() -> void:
 				Events.notice.emit("watered")
 			else:
 				Events.notice.emit("nothing to water here")
+		Tools.AXE:
+			var wood: int = _farm.fell(cell)
+			if wood > 0:
+				_act("till")
+				Events.notice.emit("felled it for %d wood" % wood)
+			else:
+				Events.notice.emit("nothing here to fell")
 		Tools.HAND:
 			_hand(cell)
 
@@ -245,12 +255,25 @@ func _hand(cell: Vector2i) -> void:
 	if plot == null:
 		Events.notice.emit("till the ground first")
 		return
-	if plot.crop != null:
-		Events.notice.emit("still growing")
-		return
 	var item := current_seed()
 	if item == null:
 		Events.notice.emit("no seeds - buy some at the shop")
+		return
+
+	# Fertiliser goes in whether or not something is growing there already, which
+	# is the point of feeding a plot that regrows.
+	if item.fertilises:
+		if not _farm.fertilise(cell):
+			Events.notice.emit("that soil is already fed")
+			return
+		if not Game.take_item(item.id, 1):
+			return
+		_act("plant")
+		Events.notice.emit("fed the soil")
+		return
+
+	if plot.crop != null:
+		Events.notice.emit("still growing")
 		return
 	if not Game.take_item(item.id, 1):
 		return

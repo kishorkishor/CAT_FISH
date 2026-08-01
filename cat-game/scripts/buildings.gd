@@ -81,6 +81,8 @@ func why_not(cell: Vector2i, entry: BuildEntry) -> String:
 					return CELL_BLOCKED
 	if Game.money < entry.cost:
 		return "costs %d coins" % entry.cost
+	if entry.wood > 0 and Game.count_of("wood") < entry.wood:
+		return "needs %d wood, you have %d" % [entry.wood, Game.count_of("wood")]
 	return ""
 
 
@@ -92,6 +94,10 @@ func place(cell: Vector2i, entry: BuildEntry, charge := true) -> bool:
 	if charge and not can_place(cell, entry):
 		return false
 	if charge and not Game.spend(entry.cost):
+		return false
+	if charge and entry.wood > 0 and not Game.take_item("wood", entry.wood):
+		# Coins already gone, so hand them back rather than charging for nothing.
+		Game.earn(entry.cost)
 		return false
 	var p := Placed.new()
 	p.entry = entry
@@ -112,6 +118,8 @@ func demolish(cell: Vector2i) -> bool:
 		for offset in p.entry.cells():
 			if p.cell + offset == cell:
 				Game.earn(int(p.entry.cost * p.entry.refund))
+				if p.entry.wood > 0:
+					Game.add_item("wood", int(p.entry.wood * p.entry.refund))
 				p.node.queue_free()
 				placed.remove_at(i)
 				return true

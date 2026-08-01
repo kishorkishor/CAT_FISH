@@ -31,6 +31,8 @@ func _initialize() -> void:
 	var post := centre + Vector2i(0, -8)
 	var game := root.get_node("Game")
 	game.money = 9999
+	# Buildings cost timber as well as coins now.
+	game.bag["wood"] = 99
 	_ok(buildings.place(post, entry), "placed a sprinkler")
 
 	var near := post + Vector2i(1, 0)

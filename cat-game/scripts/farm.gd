@@ -186,6 +186,45 @@ func harvest(cell: Vector2i) -> int:
 	return count
 
 
+## Chop a tree down for timber. Returns how much wood came out, 0 if there was
+## nothing to fell.
+##
+## A living tree is worth more than a dead one, and a grown one more than a
+## sapling. That is the whole decision the axe exists to pose: keep watering it
+## and keep picking fruit, or cash it in for the wood - and letting it die of
+## thirst first is the worst of the three, not a free harvest.
+func fell(cell: Vector2i) -> int:
+	var plot: Plot = plots.get(cell)
+	if plot == null or plot.crop == null or not plot.crop.is_tree:
+		return 0
+	var wood: int = plot.crop.wood_dead
+	if not plot.dead:
+		var maturity := float(plot.stage + 1) / float(maxi(1, plot.crop.stage_count()))
+		wood = maxi(1, roundi(plot.crop.wood_alive * maturity))
+	Game.add_item("wood", wood)
+	Events.tree_felled.emit(plot.crop, wood)
+
+	plot.crop = null
+	plot.stage = 0
+	plot.days_in_stage = 0
+	plot.dead = false
+	plot.wilt_days = 0
+	_refresh_sprite(plot)
+	queue_redraw()
+	return wood
+
+
+## What the axe would get out of this cell, for the prompt.
+func fell_value(cell: Vector2i) -> int:
+	var plot: Plot = plots.get(cell)
+	if plot == null or plot.crop == null or not plot.crop.is_tree:
+		return 0
+	if plot.dead:
+		return plot.crop.wood_dead
+	var maturity := float(plot.stage + 1) / float(maxi(1, plot.crop.stage_count()))
+	return maxi(1, roundi(plot.crop.wood_alive * maturity))
+
+
 ## What the cat would do here, so the HUD can say so before the click.
 func action_at(cell: Vector2i, tool: int) -> String:
 	var plot: Plot = plots.get(cell)
@@ -198,6 +237,13 @@ func action_at(cell: Vector2i, tool: int) -> String:
 			if plot == null:
 				return ""
 			return "water" if plot.water < 1.0 else "already watered"
+		Tools.AXE:
+			var wood := fell_value(cell)
+			if wood <= 0:
+				return ""
+			# The number is the point. "Fell" tells you nothing; "fell for 6 wood"
+			# next to a dying tree offering 2 is the whole decision, on one line.
+			return "fell for %d wood" % wood
 		Tools.HAND:
 			if plot == null:
 				return ""

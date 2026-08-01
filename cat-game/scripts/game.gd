@@ -136,7 +136,9 @@ func sell_all() -> int:
 	var total := 0
 	for id in bag.keys():
 		var item: ItemData = items.get(id)
-		if item == null or item.plants != null:
+		# Seeds and materials are things you are saving up. One careless press of
+		# sell-everything should not empty the shed.
+		if item == null or item.plants != null or item.keep:
 			continue
 		total += item.value * bag[id]
 		bag.erase(id)

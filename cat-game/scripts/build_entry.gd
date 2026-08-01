@@ -7,6 +7,8 @@ extends Resource
 @export var display_name := ""
 @export var scene: PackedScene
 @export var cost := 50
+## Wood it also takes. Coins buy the fittings; the timber you fell yourself.
+@export var wood := 0
 ## Fraction of the cost handed back when it is taken down again.
 @export_range(0.0, 1.0) var refund := 0.5
 ## Footprint in cells, width by depth. Most things are 1x1.
