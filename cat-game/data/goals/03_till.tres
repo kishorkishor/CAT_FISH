@@ -6,7 +6,7 @@
 script = ExtResource("1_s")
 id = "03_till"
 title = "plant something"
-hint = "hold the hoe, till grass, then sow with the paw"
+hint = "hold the hoe and till inside the marked field"
 track = "planted"
 target = 1
 reward = 20

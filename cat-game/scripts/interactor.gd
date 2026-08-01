@@ -37,6 +37,7 @@ var build_index := 0
 @onready var _player: CharacterBody2D = _world.get_node("Entities/Player")
 @onready var _farm: Node2D = _world.get_node("Farm")
 @onready var _buildings: Node2D = _world.get_node("Buildings")
+@onready var _fields: Node2D = _world.get_node("Fields")
 
 ## Facing to a cell step. The vertical step is doubled because a cell is twice as
 ## wide as it is tall, so one step north is two rows up.
@@ -59,8 +60,28 @@ var _focus: Node2D = null
 
 func _process(_delta: float) -> void:
 	if tool == Tools.BUILD:
-		_buildings.move_ghost(cursor_cell())
+		var entry := current_build()
+		if entry != null and entry.is_field:
+			_buildings.clear_ghost()
+			_preview_field()
+		else:
+			_fields.showing_pending = false
+			_buildings.move_ghost(cursor_cell())
+	else:
+		_fields.showing_pending = false
 	_update_focus()
+
+
+## The rectangle you would get if you pressed now, drawn on the ground in green
+## or red. Before the first corner it previews a single cell, so the tool reads
+## as live rather than inert.
+func _preview_field() -> void:
+	var cell := cursor_cell()
+	var rect: Rect2i = _fields.between(_field_anchor, cell) if _marking_field() \
+		else Rect2i(cell, Vector2i.ONE)
+	_fields.pending = rect
+	_fields.pending_ok = _fields.can_mark(rect)
+	_fields.showing_pending = true
 
 
 ## The nearest thing worth talking about, or null. Walking up to something is the
@@ -217,9 +238,50 @@ func _run(action: String) -> void:
 		"cast": Events.notice.emit("switch to the rod and press use")
 
 
+## Marking a field takes two presses: one for a corner, one for the opposite. A
+## drag would be the obvious gesture and it is the wrong one here - the same
+## press has to work on a keyboard and under a thumb, and a two-tap rectangle
+## does, while a drag needs a pointer that is down and moving.
+var _field_anchor := Vector2i(-9999, -9999)
+
+
+func _marking_field() -> bool:
+	return _field_anchor.x != -9999
+
+
+func _use_field(cell: Vector2i) -> void:
+	if Input.is_action_pressed("modify"):
+		_field_anchor = Vector2i(-9999, -9999)
+		_fields.showing_pending = false
+		if _fields.clear_at(cell):
+			Events.notice.emit("gave the field back to the grass")
+		else:
+			Events.notice.emit("no field there")
+		return
+
+	if not _marking_field():
+		_field_anchor = cell
+		Events.notice.emit("first corner - press again for the other")
+		return
+
+	var rect: Rect2i = _fields.between(_field_anchor, cell)
+	var reason: String = _fields.why_not(rect)
+	if not reason.is_empty():
+		Events.notice.emit(reason)
+		return
+	var price: int = _fields.cost_of(rect)
+	if _fields.mark(rect):
+		Events.notice.emit("marked out %d cells for %d coins" % [rect.get_area(), price])
+	_field_anchor = Vector2i(-9999, -9999)
+	_fields.showing_pending = false
+
+
 func _use_build() -> void:
 	var cell := cursor_cell()
 	var entry := current_build()
+	if entry != null and entry.is_field:
+		_use_field(cell)
+		return
 	if Input.is_action_pressed("modify"):
 		if not _buildings.demolish(cell):
 			Events.notice.emit("nothing to take down there")

@@ -83,9 +83,19 @@ func _process(_delta: float) -> void:
 	var status: String = _farm.describe(cell)
 	if _interactor.tool == Tools.BUILD:
 		var entry: BuildEntry = _interactor.current_build()
-		var reason: String = _interactor._buildings.why_not(_interactor.cursor_cell(), entry)
-		_prompt.text = "%s - %s" % [entry.display_name, reason if reason else "place it"] \
-			if entry != null else "nothing to build"
+		if entry == null:
+			_prompt.text = "nothing to build"
+		elif entry.is_field:
+			# A field is priced by the cell, so the line has to say what the
+			# rectangle you are marking out right now would actually cost.
+			var fields: Node2D = _interactor._fields
+			var why: String = fields.why_not(fields.pending)
+			_prompt.text = "field  -  %s" % (why if not why.is_empty()
+				else "%d cells, %d coins" % [fields.pending.get_area(),
+					fields.cost_of(fields.pending)])
+		else:
+			var reason: String = _interactor._buildings.why_not(_interactor.cursor_cell(), entry)
+			_prompt.text = "%s - %s" % [entry.display_name, reason if reason else "place it"]
 	elif _interactor.tool == Tools.ROD:
 		_prompt.text = "cast into the water"
 	elif not status.is_empty():

@@ -9,6 +9,8 @@ func _initialize() -> void:
 	var world := (load("res://scenes/world.tscn") as PackedScene).instantiate()
 	root.add_child(world)
 	await process_frame
+	# Farming needs marked ground now; this probe is about the sky, not the field.
+	world.get_node("Fields").fields.append(Rect2i(38, 24, 24, 40))
 	var game := root.get_node("Game")
 	var clock := root.get_node("Clock")
 	var weather := root.get_node("Weather")

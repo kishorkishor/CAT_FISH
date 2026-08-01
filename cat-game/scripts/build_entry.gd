@@ -15,6 +15,9 @@ extends Resource
 @export var size := Vector2i.ONE
 ## Piers and moorings go in the water; everything else wants dry land.
 @export var on_water := false
+## Marks ground out to farm on instead of placing a prop. Priced per cell by the
+## field itself rather than by cost, because a field has no fixed size.
+@export var is_field := false
 
 @export_group("Sprinkler")
 ## How far it throws water, in cells. 0 means it is not a sprinkler at all.

@@ -55,6 +55,7 @@ var plots: Dictionary = {}
 @onready var _ground: TileMapLayer = get_parent().get_node("Water")
 @onready var _land: TileMapLayer = get_parent().get_node("Land")
 @onready var _buildings: Node2D = get_parent().get_node("Buildings")
+@onready var _fields: Node2D = get_parent().get_node_or_null("Fields")
 
 
 func _ready() -> void:
@@ -103,8 +104,14 @@ func _draw_flecks(centre: Vector2, size: Vector2) -> void:
 
 # --- the four verbs ---------------------------------------------------------
 
-## Ground can be tilled if it is dry land with nothing already on it.
+## Ground can be tilled if it is marked-out field with nothing already on it.
+##
+## The field is the gate. Crops used to go anywhere the hoe reached, which made a
+## farm a scatter of dots and made "where does my tool act" a question you had to
+## answer by pressing and finding out.
 func can_till(cell: Vector2i) -> bool:
+	if _fields != null and not _fields.contains(cell):
+		return false
 	return not plots.has(cell) and not _ground.is_fully_secondary(cell) \
 		and _land._corner_mask(cell.x, cell.y) == 15
 
@@ -232,7 +239,13 @@ func action_at(cell: Vector2i, tool: int) -> String:
 		Tools.HOE:
 			if plot != null and plot.crop == null:
 				return "clear"
-			return "till" if can_till(cell) else ""
+			if can_till(cell):
+				return "till"
+			# Off the marked ground the hoe is not broken, it is out of bounds -
+			# and that is worth saying, since the fix is a field, not a different tile.
+			if _fields != null and not _fields.contains(cell) 					and not _ground.is_fully_secondary(cell) 					and _land._corner_mask(cell.x, cell.y) == 15:
+				return "mark a field here first (hammer)"
+			return ""
 		Tools.CAN:
 			if plot == null:
 				return ""

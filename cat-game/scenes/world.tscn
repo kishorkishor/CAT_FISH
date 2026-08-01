@@ -30,6 +30,8 @@
 [ext_resource type="PackedScene" path="res://scenes/props/house_blue.tscn" id="27_house_blue"]
 [ext_resource type="Script" uid="uid://c22bvvtitu4p3" path="res://scripts/farm.gd" id="28_farm"]
 [ext_resource type="Script" path="res://scripts/water_bars.gd" id="38_bars"]
+[ext_resource type="Script" path="res://scripts/fields.gd" id="41_fields"]
+[ext_resource type="Resource" path="res://data/build/field.tres" id="48_b"]
 [ext_resource type="PackedScene" path="res://scenes/boat.tscn" id="39_boat"]
 [ext_resource type="Script" path="res://scripts/sailing.gd" id="40_sail"]
 [ext_resource type="Script" uid="uid://ck4twlxe1ep0d" path="res://scripts/buildings.gd" id="29_buildings"]
@@ -106,6 +108,9 @@ bay_depth = 9.0
 bay_angle_deg = 90.0
 bay_radius = 9.5
 outer_islands = Array[Vector3]([Vector3(-34, -26, 5), Vector3(37, -34, 3.5), Vector3(-30, 34, 4)])
+
+[node name="Fields" type="Node2D" parent="."]
+script = ExtResource("41_fields")
 
 [node name="Farm" type="Node2D" parent="." unique_id=406881400 groups=["farm"]]
 script = ExtResource("28_farm")
@@ -265,7 +270,7 @@ position = Vector2(1088, 1376)
 
 [node name="Buildings" type="Node2D" parent="." unique_id=1373998934 groups=["buildings"]]
 script = ExtResource("29_buildings")
-catalogue = Array[ExtResource("25_iexy4")]([ExtResource("40_b"), ExtResource("41_b"), ExtResource("42_b"), ExtResource("43_b"), ExtResource("44_b"), ExtResource("45_b"), ExtResource("46_b"), ExtResource("47_b")])
+catalogue = Array[ExtResource("25_iexy4")]([ExtResource("48_b"), ExtResource("40_b"), ExtResource("41_b"), ExtResource("42_b"), ExtResource("43_b"), ExtResource("44_b"), ExtResource("45_b"), ExtResource("46_b"), ExtResource("47_b")])
 
 [node name="Interactor" type="Node2D" parent="." unique_id=1130752911 groups=["interactor"]]
 script = ExtResource("30_interactor")

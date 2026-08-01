@@ -24,6 +24,7 @@ var resume_on_load := false
 
 var _farm: Node = null
 var _buildings: Node = null
+var _fields: Node = null
 
 
 func _ready() -> void:
@@ -181,6 +182,10 @@ func register_farm(farm: Node) -> void:
 	_farm = farm
 
 
+func register_fields(fields: Node) -> void:
+	_fields = fields
+
+
 func register_buildings(buildings: Node) -> void:
 	_buildings = buildings
 
@@ -195,6 +200,7 @@ func save_game() -> void:
 		"hour": Clock.hour,
 		"farm": _farm.to_save() if _farm != null else [],
 		"buildings": _buildings.to_save() if _buildings != null else [],
+		"fields": _fields.to_save() if _fields != null else [],
 		"goals": Goals.to_save(),
 		"log": LogBook.to_save(),
 		"weather": Weather.to_save(),
@@ -226,8 +232,14 @@ func load_game() -> bool:
 			rod = r
 	Events.rod_changed.emit(rod)
 	Clock.hour = float(parsed.get("hour", Clock.MORNING))
+	# Fields first: the farm's plots have to land inside marked ground, and a save
+	# written before fields existed has none, so anything orphaned gets wrapped.
+	if _fields != null:
+		_fields.from_save(parsed.get("fields", []))
 	if _farm != null:
 		_farm.from_save(parsed.get("farm", []))
+		if _fields != null and not parsed.has("fields"):
+			_fields.adopt_orphans(_farm.plots.keys())
 	if _buildings != null:
 		_buildings.from_save(parsed.get("buildings", []))
 	Goals.from_save(parsed.get("goals", {}))

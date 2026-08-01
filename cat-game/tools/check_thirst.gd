@@ -15,6 +15,9 @@ func _initialize() -> void:
 	var world := (load("res://scenes/world.tscn") as PackedScene).instantiate()
 	root.add_child(world)
 	await process_frame
+	# These probes are not about where farming is allowed - check_fields covers
+	# that. Mark the working area out so they can get on with what they do test.
+	world.get_node("Fields").fields.append(Rect2i(38, 24, 24, 40))
 	var farm: Node2D = world.get_node("Farm")
 	var water: TileMapLayer = world.get_node("Water")
 	var weather := root.get_node("Weather")
