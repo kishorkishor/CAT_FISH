@@ -32,6 +32,11 @@ const DIRECTIONS: PackedStringArray = [
 @export var jump_height: float = 18.0
 ## Seconds from leaving the ground to landing.
 @export var jump_time: float = 0.42
+## A pounce out of a run is flatter and quicker than a standing hop - the cat is
+## already carrying speed, so it throws itself forward rather than upward.
+@export var pounce_height: float = 12.0
+## Seconds from leaving the ground to landing on a pounce.
+@export var pounce_time: float = 0.34
 ## Allow steering while airborne.
 @export var air_control: bool = true
 
@@ -65,6 +70,17 @@ const DIRECTIONS: PackedStringArray = [
 @export var waterline_y: float = 0.0
 ## The ripple only shows once the cat is actually moving, in squared px/s.
 @export var ripple_min_speed_sq: float = 100.0
+## Out in the deep the cat rides the swell. Peak of that rise and fall in pixels;
+## the shallows get none of it, which is most of what tells the two apart once
+## the waterline has eaten everything below the shoulders.
+@export var swell_height: float = 2.5
+## Full rise-and-fall cycles per second of the swell.
+@export var swell_speed: float = 1.1
+## Playback rate of the deep stroke. Under one because there is nothing underfoot
+## to push against, so the cat hauls itself along slower than in the shallows.
+@export var deep_anim_speed: float = 0.7
+## How much wider the wake spreads in deep water than in the shallows.
+@export var deep_ripple_scale: float = 1.35
 
 @export_group("Isometric")
 ## Cells are twice as wide as they are tall. Without halving vertical movement,
@@ -95,6 +111,10 @@ var locked := false
 var _facing := "south"
 var _jump_elapsed := -1.0
 var _sprite_rest_y := 0.0
+## Latched when the jump starts. A cat that leaves the ground on four legs has to
+## land on four legs, so the rig cannot be re-decided from the run key mid-air.
+var _pouncing := false
+var _swell_phase := 0.0
 
 
 func is_jumping() -> bool:
@@ -117,11 +137,19 @@ func _physics_process(delta: float) -> void:
 
 	if not locked and Input.is_action_just_pressed("jump") and not is_jumping() and not in_water:
 		_jump_elapsed = 0.0
+		_pouncing = state == "run" and _has_pounce(_facing)
 		state = "jump"
 
 	_move(input, state, delta)
 	_update_animation(input, state)
 	_update_hop(delta)
+	_update_swell(delta)
+
+
+## A pounce needs the four-legged rig to actually have the frames for it,
+## otherwise the cat would leap on all fours and land as a missing animation.
+func _has_pounce(direction: String) -> bool:
+	return frames_sprint != null and frames_sprint.has_animation("jump_%s" % direction)
 
 
 ## Swimming outranks everything: the cat cannot sprint or hop out of water.
@@ -150,6 +178,9 @@ func _move(input: Vector2, state: String, delta: float) -> void:
 			"wade", "wade_idle": speed = wade_speed
 			"swim": speed = swim_speed
 			"deep": speed = deep_speed
+			# A leap out of a sprint keeps the sprint's speed. Dropping to a walk
+			# the moment the paws leave the ground reads as landing in treacle.
+			"jump": speed = run_speed if _pouncing else walk_speed
 		target = Vector2(input.x, input.y * iso_ratio) * speed
 
 	var rate := acceleration if target != Vector2.ZERO else friction
@@ -162,13 +193,30 @@ func _move(input: Vector2, state: String, delta: float) -> void:
 func _update_hop(delta: float) -> void:
 	if not is_jumping():
 		return
+	var span := pounce_time if _pouncing else jump_time
+	var peak := pounce_height if _pouncing else jump_height
 	_jump_elapsed += delta
-	if _jump_elapsed >= jump_time:
+	if _jump_elapsed >= span:
 		_jump_elapsed = -1.0
+		_pouncing = false
 		_sprite.offset.y = _sprite_rest_y
 		return
-	var t := _jump_elapsed / jump_time
-	_sprite.offset.y = _sprite_rest_y - jump_height * 4.0 * t * (1.0 - t)
+	var t := _jump_elapsed / span
+	_sprite.offset.y = _sprite_rest_y - peak * 4.0 * t * (1.0 - t)
+
+
+## Out past the shelf the cat rides the swell. It is the one cue that survives the
+## waterline clip - by the time the body is under, a rise and fall of a couple of
+## pixels is most of what says this water is over the cat's head.
+func _update_swell(delta: float) -> void:
+	if is_jumping():
+		return
+	if water_depth < 3:
+		_swell_phase = 0.0
+		_sprite.offset.y = _sprite_rest_y
+		return
+	_swell_phase = fmod(_swell_phase + delta * swell_speed, 1.0)
+	_sprite.offset.y = _sprite_rest_y + sin(_swell_phase * TAU) * swell_height
 
 
 func _update_animation(input: Vector2, state: String) -> void:
@@ -176,7 +224,7 @@ func _update_animation(input: Vector2, state: String) -> void:
 		_facing = _direction_name(input)
 
 	var wanted_set := frames_upright
-	if state == "run" and frames_sprint != null:
+	if (state == "run" or _pouncing) and frames_sprint != null:
 		wanted_set = frames_sprint
 	elif holding_rod and frames_rod != null and water_depth < 2:
 		# Dropped in deep water: the swim frames only exist on the upright set,
@@ -195,10 +243,16 @@ func _update_animation(input: Vector2, state: String) -> void:
 	_sprite.material.set_shader_parameter(&"clip_enabled", water_depth > 0)
 	_sprite.material.set_shader_parameter(&"waterline_y", waterline_y)
 
-	# A wake trails the cat only while it is actually moving through water.
+	# A wake trails the cat only while it is actually moving through water, and it
+	# spreads wider out in the deep where there is no bottom to break it up.
 	_ripple.visible = water_depth > 0 and velocity.length_squared() > ripple_min_speed_sq
+	_ripple.scale = Vector2.ONE * (deep_ripple_scale if water_depth >= 3 else 1.0)
 	if _ripple.visible and not _ripple.is_playing():
 		_ripple.play(&"default")
+
+	# The deep stroke runs slower than the shallow one. Same trick as the swell:
+	# a difference in timing survives the clip when a difference in pose does not.
+	_sprite.speed_scale = deep_anim_speed if state == "deep" else 1.0
 
 	if _sprite.sprite_frames != wanted_set or not is_equal_approx(_sprite_rest_y, base.y):
 		_sprite.sprite_frames = wanted_set
@@ -213,6 +267,8 @@ func _update_animation(input: Vector2, state: String) -> void:
 		"wade": chain.append("walk_%s" % _facing)
 		"wade_idle": chain.append("idle_%s" % _facing)
 		"deep": chain.append("swim_%s" % _facing)
+		# A pounce sits on the four-legged rig, which has a run cycle but no walk.
+		"jump": chain.append("run_%s" % _facing)
 	chain.append("walk_%s" % _facing)
 	chain.append("idle_%s" % _facing)
 
