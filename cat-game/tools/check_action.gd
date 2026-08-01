@@ -54,6 +54,25 @@ func _initialize() -> void:
 	await physics_frame
 	var cell: Vector2i = interactor.target_cell()
 
+	# --- the prompt names every step ---------------------------------------
+	# Blank means "this tool does nothing here". It must never be blank on a step
+	# the player is meant to take, or the only way to find the step is to guess.
+	interactor.tool = Tools.HOE
+	await physics_frame
+	_ok(farm.action_at(cell, Tools.HOE) == "till",
+		"grass + hoe reads: '%s'" % farm.action_at(cell, Tools.HOE))
+	farm.till(cell)
+	_ok(farm.action_at(cell, Tools.HAND) == "sow",
+		"bare soil + paw reads: '%s'" % farm.action_at(cell, Tools.HAND))
+	_ok(farm.action_at(cell, Tools.CAN) == "water",
+		"dry soil + can reads: '%s'" % farm.action_at(cell, Tools.CAN))
+	farm.plant(cell, load("res://data/crops/carrot.tres"))
+	_ok(farm.action_at(cell, Tools.HAND) == "still growing",
+		"a growing crop + paw reads: '%s'" % farm.action_at(cell, Tools.HAND))
+	farm.clear(cell)
+	farm.plots.erase(cell)
+	await physics_frame
+
 	# --- tilling swings ----------------------------------------------------
 	interactor.tool = Tools.HOE
 	await physics_frame

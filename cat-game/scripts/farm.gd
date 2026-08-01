@@ -117,11 +117,20 @@ func action_at(cell: Vector2i, tool: int) -> String:
 				return "clear"
 			return "till" if can_till(cell) else ""
 		Tools.CAN:
-			return "water" if plot != null and not plot.watered else ""
+			if plot == null:
+				return ""
+			return "water" if not plot.watered else "already watered"
 		Tools.HAND:
-			if plot != null and plot.crop != null and plot.crop.is_ripe(plot.stage):
+			if plot == null:
+				return ""
+			# Sowing used to be the one verb the game never advertised: stood on
+			# bare soil with a pocket full of seed, the prompt went blank and the
+			# only way to learn the paw plants things was to press and find out.
+			if plot.crop == null:
+				return "sow"
+			if plot.crop.is_ripe(plot.stage):
 				return "harvest"
-			return ""
+			return "still growing"
 	return ""
 
 
