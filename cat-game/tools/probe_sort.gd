@@ -23,7 +23,7 @@ var _out := ""
 
 func _initialize() -> void:
 	var argv := OS.get_cmdline_user_args()
-	var scene_path: String = argv[0] if argv.size() > 0 else "res://scenes/test_shore.tscn"
+	var scene_path: String = argv[0] if argv.size() > 0 else "res://scenes/world.tscn"
 	_out = argv[1] if argv.size() > 1 else "screenshots"
 
 	_root = (load(scene_path) as PackedScene).instantiate()

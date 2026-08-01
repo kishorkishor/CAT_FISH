@@ -18,7 +18,7 @@ var _taken := 0
 
 func _initialize() -> void:
 	var argv := OS.get_cmdline_user_args()
-	var scene_path: String = argv[0] if argv.size() > 0 else "res://scenes/test_ground.tscn"
+	var scene_path: String = argv[0] if argv.size() > 0 else "res://scenes/world.tscn"
 	_anim = argv[1] if argv.size() > 1 else "walk_south"
 	_out = argv[2] if argv.size() > 2 else "screenshots"
 

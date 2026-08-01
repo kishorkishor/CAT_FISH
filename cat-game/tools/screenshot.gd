@@ -13,7 +13,7 @@ var _out := ""
 
 func _initialize() -> void:
 	var argv := OS.get_cmdline_user_args()
-	var scene_path := argv[0] if argv.size() > 0 else "res://scenes/test_ground.tscn"
+	var scene_path := argv[0] if argv.size() > 0 else "res://scenes/world.tscn"
 	_out = argv[1] if argv.size() > 1 else "shot.png"
 
 	var packed: PackedScene = load(scene_path)

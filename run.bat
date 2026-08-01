@@ -23,8 +23,6 @@ if errorlevel 1 (
 
 set "SCENE=res://scenes/title.tscn"
 if /i "%~1"=="world" set "SCENE=res://scenes/world.tscn"
-if /i "%~1"=="shore" set "SCENE=res://scenes/test_shore.tscn"
-if /i "%~1"=="ground" set "SCENE=res://scenes/test_ground.tscn"
 if /i "%~1"=="editor" goto :editor
 
 echo.
