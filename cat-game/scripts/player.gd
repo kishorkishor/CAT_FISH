@@ -156,7 +156,7 @@ func _has_pounce(direction: String) -> bool:
 ## Wading does not - shin-deep water is still walking, just slower and wetter.
 func _resolve_state(input: Vector2) -> String:
 	if water_depth >= 3:
-		return "deep"
+		return "deepswim"
 	if water_depth == 2:
 		return "swim"
 	if is_jumping():
@@ -177,7 +177,7 @@ func _move(input: Vector2, state: String, delta: float) -> void:
 			"run": speed = run_speed
 			"wade", "wade_idle": speed = wade_speed
 			"swim": speed = swim_speed
-			"deep": speed = deep_speed
+			"deepswim": speed = deep_speed
 			# A leap out of a sprint keeps the sprint's speed. Dropping to a walk
 			# the moment the paws leave the ground reads as landing in treacle.
 			"jump": speed = run_speed if _pouncing else walk_speed
@@ -250,10 +250,6 @@ func _update_animation(input: Vector2, state: String) -> void:
 	if _ripple.visible and not _ripple.is_playing():
 		_ripple.play(&"default")
 
-	# The deep stroke runs slower than the shallow one. Same trick as the swell:
-	# a difference in timing survives the clip when a difference in pose does not.
-	_sprite.speed_scale = deep_anim_speed if state == "deep" else 1.0
-
 	if _sprite.sprite_frames != wanted_set or not is_equal_approx(_sprite_rest_y, base.y):
 		_sprite.sprite_frames = wanted_set
 		_sprite_rest_y = base.y
@@ -266,7 +262,7 @@ func _update_animation(input: Vector2, state: String) -> void:
 	match state:
 		"wade": chain.append("walk_%s" % _facing)
 		"wade_idle": chain.append("idle_%s" % _facing)
-		"deep": chain.append("swim_%s" % _facing)
+		"deepswim": chain.append("swim_%s" % _facing)
 		# A pounce sits on the four-legged rig, which has a run cycle but no walk.
 		"jump": chain.append("run_%s" % _facing)
 	chain.append("walk_%s" % _facing)
@@ -279,15 +275,37 @@ func _update_animation(input: Vector2, state: String) -> void:
 			break
 	if wanted.is_empty():
 		return
+	_sprite.speed_scale = _rate_for(state, wanted_set, wanted)
 	if _sprite.animation != wanted:
 		_sprite.play(wanted)
+
+
+## How fast to run the chosen animation.
+##
+## A jump is the interesting case: the arc is timed in seconds and the animation
+## is timed in frames, and the two have no reason to agree. Left alone the cat
+## lands halfway through its own leap, having never played the crouch it ends on,
+## so the rate is stretched to fit whichever arc is in flight.
+func _rate_for(state: String, set: SpriteFrames, anim: String) -> float:
+	if state == "deepswim":
+		# Nothing underfoot to push against, so the stroke is slower than in the
+		# shallows. A difference in timing survives the waterline clip; by the
+		# time the body is under, a difference in pose does not.
+		return deep_anim_speed
+	if state == "jump":
+		var span := pounce_time if _pouncing else jump_time
+		var fps := set.get_animation_speed(anim)
+		var count := set.get_frame_count(anim)
+		if span > 0.0 and fps > 0.0 and count > 0:
+			return float(count) / (fps * span)
+	return 1.0
 
 
 func _sink_for(state: String) -> float:
 	match state:
 		"wade", "wade_idle": return wade_sink
 		"swim": return swim_sink
-		"deep": return deep_sink
+		"deepswim": return deep_sink
 	return 0.0
 
 

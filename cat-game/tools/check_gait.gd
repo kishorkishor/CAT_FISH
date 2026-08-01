@@ -65,8 +65,18 @@ func _initialize() -> void:
 			_ok(player.velocity.length() > player.walk_speed * 1.2,
 				"pounce: keeps sprint speed in the air (%.0f px/s)" % player.velocity.length())
 
+		# The arc is timed in seconds and the animation in frames. If the rate is
+		# not stretched to fit, the cat lands having played only the first half of
+		# its own leap and never showing the crouch it ends on.
+		var seen := {}
+		var anim: String = sprite.animation
 		while player.is_jumping():
+			seen[sprite.frame] = true
 			await physics_frame
+		var total: int = sprite.sprite_frames.get_frame_count(anim)
+		_ok(seen.size() == total,
+			"%s: all %d frames of %s play before landing (saw %d)" % [
+				label, total, anim, seen.size()])
 		_ok(sprite.sprite_frames == upright or run_held, "%s: lands cleanly" % label)
 
 	# The shallows and the open sea, side by side.
