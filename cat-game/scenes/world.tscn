@@ -30,6 +30,8 @@
 [ext_resource type="PackedScene" path="res://scenes/props/house_blue.tscn" id="27_house_blue"]
 [ext_resource type="Script" uid="uid://c22bvvtitu4p3" path="res://scripts/farm.gd" id="28_farm"]
 [ext_resource type="Script" path="res://scripts/water_bars.gd" id="38_bars"]
+[ext_resource type="PackedScene" path="res://scenes/boat.tscn" id="39_boat"]
+[ext_resource type="Script" path="res://scripts/sailing.gd" id="40_sail"]
 [ext_resource type="Script" uid="uid://ck4twlxe1ep0d" path="res://scripts/buildings.gd" id="29_buildings"]
 [ext_resource type="Script" uid="uid://cfdrcv88e1me4" path="res://scripts/interactor.gd" id="30_interactor"]
 [ext_resource type="Script" uid="uid://c67ogjfc5hrdy" path="res://scripts/daylight.gd" id="31_daylight"]
@@ -113,6 +115,9 @@ y_sort_enabled = true
 
 [node name="Player" parent="Entities" unique_id=947108469 instance=ExtResource("4_player")]
 position = Vector2(3104, 784)
+
+[node name="Boat" parent="Entities" instance=ExtResource("39_boat")]
+position = Vector2(2784, 1392)
 
 [node name="Pier" parent="Entities" unique_id=162380855 instance=ExtResource("13_pier")]
 position = Vector2(3040, 1328)
@@ -214,6 +219,9 @@ catalogue = Array[ExtResource("25_iexy4")]([ExtResource("40_b"), ExtResource("41
 [node name="Interactor" type="Node2D" parent="." unique_id=1130752911 groups=["interactor"]]
 script = ExtResource("30_interactor")
 starting_seeds = Array[ExtResource("34_npbic")]([ExtResource("50_seed"), ExtResource("51_seed"), ExtResource("52_seed"), ExtResource("53_seed")])
+
+[node name="Sailing" type="Node2D" parent="."]
+script = ExtResource("40_sail")
 
 [node name="Daylight" type="CanvasModulate" parent="." unique_id=2047420453]
 script = ExtResource("31_daylight")

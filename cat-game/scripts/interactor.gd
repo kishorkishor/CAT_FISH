@@ -97,10 +97,24 @@ func prompt() -> String:
 	return ""
 
 
-## The cell the cat is standing on, stepped forward by its facing.
+## Set while the cat is aboard the boat. Tools that need ground are refused
+## rather than silently doing nothing over open water.
+var at_sea := false
+
+
+## Whichever body is being driven - the cat, or the boat it is standing on.
+func body() -> Node2D:
+	var sailing: Node = _world.get_node_or_null("Sailing")
+	if sailing != null:
+		return sailing.body()
+	return _player
+
+
+## The cell in front, stepped forward by facing.
 func target_cell() -> Vector2i:
-	var here := _ground.local_to_map(_ground.to_local(_player.global_position))
-	var step: Vector2i = STEP.get(_player.facing(), Vector2i(0, 2))
+	var driven := body()
+	var here := _ground.local_to_map(_ground.to_local(driven.global_position))
+	var step: Vector2i = STEP.get(driven.facing(), Vector2i(0, 2))
 	return here + step * reach
 
 
@@ -173,6 +187,11 @@ func _use() -> void:
 	if tool != Tools.BUILD and _focus != null and is_instance_valid(_focus) \
 			and not _focus.action.is_empty():
 		_run(_focus.action)
+		return
+	# Afloat, the rod is the only thing that still works. Everything else wants
+	# ground under it, and saying so beats a press that does nothing.
+	if at_sea and tool != Tools.ROD:
+		Events.notice.emit("you need dry land to use the %s" % Tools.NAMES[tool])
 		return
 	match tool:
 		Tools.BUILD: _use_build()

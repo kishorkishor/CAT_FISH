@@ -19,6 +19,10 @@ func _initialize() -> void:
 		if prop == player:
 			continue
 		for child in prop.get_children():
+			# A wake or ripple is centred on the base on purpose - it is the ring
+			# on the water, not the thing standing on it.
+			if child.name in ["Wake", "Ripple"]:
+				continue
 			if child is Sprite2D or child is AnimatedSprite2D:
 				checked += 1
 				if not is_equal_approx(child.position.y, 0.0):

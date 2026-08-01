@@ -37,7 +37,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	# the one in paw. Wading is fine to cast from; swimming is not.
 	if not event.is_action_pressed("use") or _busy:
 		return
-	if _interactor.tool != Tools.ROD or _player.in_water:
+	if _interactor.tool != Tools.ROD:
+		return
+	# Swimming, no. Standing on a deck over the same water, yes.
+	if _player.in_water and not _interactor.at_sea:
 		return
 	var cell := _find_water_ahead()
 	if cell.x >= 0:
@@ -51,8 +54,9 @@ func _unhandled_input(event: InputEvent) -> void:
 ## past the shallows, and having to stand in exactly the right spot to get there
 ## would be fiddly rather than skilful.
 func _find_water_ahead() -> Vector2i:
-	var start := _water.local_to_map(_water.to_local(_player.global_position))
-	var step: Vector2i = CELL_STEP.get(_player.facing(), Vector2i(0, 2))
+	var driven: Node2D = _interactor.body()
+	var start := _water.local_to_map(_water.to_local(driven.global_position))
+	var step: Vector2i = CELL_STEP.get(driven.facing(), Vector2i(0, 2))
 	var best := Vector2i(-1, -1)
 	var best_depth := 0
 	for i in range(1, Game.rod.cast_range + 1):

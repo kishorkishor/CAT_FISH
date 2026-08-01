@@ -1,0 +1,149 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/rotations/east.png" id="1_rarkc"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/rotations/north.png" id="2_ox13s"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/rotations/north-east.png" id="3_luisl"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/rotations/north-west.png" id="4_hsr1o"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/rotations/south.png" id="5_d3ukt"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/rotations/south-east.png" id="6_041s6"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/rotations/south-west.png" id="7_ow4ej"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/rotations/west.png" id="8_56ljc"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/sail/east/frame_000.png" id="9_bbgwq"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/sail/north/frame_000.png" id="10_cx7gw"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/sail/north-east/frame_000.png" id="11_0wk2b"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/sail/north-west/frame_000.png" id="12_yglj4"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/sail/south/frame_000.png" id="13_gass2"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/sail/south-east/frame_000.png" id="14_wp8et"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/sail/south-west/frame_000.png" id="15_sjyfw"]
+[ext_resource type="Texture2D" path="res://assets/characters/catamaran/sail/west/frame_000.png" id="16_x8hm3"]
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_rarkc")
+}],
+"loop": 1,
+"name": &"idle_east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ox13s")
+}],
+"loop": 1,
+"name": &"idle_north",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_luisl")
+}],
+"loop": 1,
+"name": &"idle_north-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_hsr1o")
+}],
+"loop": 1,
+"name": &"idle_north-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_d3ukt")
+}],
+"loop": 1,
+"name": &"idle_south",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_041s6")
+}],
+"loop": 1,
+"name": &"idle_south-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_ow4ej")
+}],
+"loop": 1,
+"name": &"idle_south-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_56ljc")
+}],
+"loop": 1,
+"name": &"idle_west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_bbgwq")
+}],
+"loop": 1,
+"name": &"sail_east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("10_cx7gw")
+}],
+"loop": 1,
+"name": &"sail_north",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_0wk2b")
+}],
+"loop": 1,
+"name": &"sail_north-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("12_yglj4")
+}],
+"loop": 1,
+"name": &"sail_north-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_gass2")
+}],
+"loop": 1,
+"name": &"sail_south",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_wp8et")
+}],
+"loop": 1,
+"name": &"sail_south-east",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("15_sjyfw")
+}],
+"loop": 1,
+"name": &"sail_south-west",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_x8hm3")
+}],
+"loop": 1,
+"name": &"sail_west",
+"speed": 10.0
+}]

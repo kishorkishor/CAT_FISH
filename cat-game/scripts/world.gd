@@ -69,3 +69,7 @@ func _set_camera_limits() -> void:
 func _physics_process(_delta: float) -> void:
 	var cell := _water.local_to_map(_water.to_local(_player.global_position))
 	_player.water_depth = _water.depth_at(cell)
+	var boat: Node2D = get_node_or_null("Entities/Boat")
+	if boat != null:
+		boat.water_depth = _water.depth_at(
+			_water.local_to_map(_water.to_local(boat.global_position)))

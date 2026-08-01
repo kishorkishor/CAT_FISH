@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/boat.gd" id="1_boat"]
+[ext_resource type="SpriteFrames" path="res://assets/characters/catamaran.tres" id="2_frames"]
+[ext_resource type="SpriteFrames" path="res://assets/effects/ripple.tres" id="3_wake"]
+
+[node name="Boat" type="CharacterBody2D"]
+y_sort_enabled = true
+script = ExtResource("1_boat")
+frames = ExtResource("2_frames")
+
+[node name="Wake" type="AnimatedSprite2D" parent="."]
+visible = false
+scale = Vector2(1.8, 1.8)
+sprite_frames = ExtResource("3_wake")
+animation = &"default"
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_frames")
+animation = &"sail_south"
+autoplay = "sail_south"
+offset = Vector2(0, -54)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-22, 0, -11, -11, 11, -11, 22, 0, 11, 11, -11, 11)
