@@ -80,6 +80,19 @@ const COLS := 4
 		bay_radius = max(0.0, value)
 		_refresh()
 
+@export_group("Outer islands")
+## More land, out in the sea. Each entry is (cell x, cell y, radius) measured from
+## the middle of the patch, so a whole archipelago is a list in the Inspector
+## rather than a second generator.
+##
+## They share the main island's wobble and its depth rule, which means the water
+## shelves off their shores exactly as it does at home - a boat that can reach one
+## can fish off it, and the same rod ladder applies.
+@export var outer_islands: Array[Vector3] = []:
+	set(value):
+		outer_islands = value
+		_refresh()
+
 
 func _ready() -> void:
 	_refresh()
@@ -161,6 +174,12 @@ func _distance_past_shore(x: int, y: int) -> float:
 		var bay_centre := Vector2.from_angle(deg_to_rad(bay_angle_deg)) \
 			* (island_radius + bay_radius - bay_depth)
 		outside = maxf(outside, bay_radius - v.distance_to(bay_centre))
+	# An outer island has its own shelf. Without this the water right up against
+	# its beach still counts as open ocean, and the deep fish would be biting in
+	# the shallows two paces from the sand.
+	for isle in outer_islands:
+		var from_isle := v.distance_to(Vector2(isle.x, isle.y * iso_ratio)) - isle.z
+		outside = minf(outside, from_isle)
 	return maxf(0.0, outside)
 
 
@@ -182,6 +201,9 @@ func _is_primary(vx: int, vy: int) -> bool:
 	var centre := grid_size * 0.5
 	var v := Vector2(vx - centre, (vy - centre) * iso_ratio)
 	var wobble := sin(vx * 0.9) * 0.5 + cos(vy * 0.7) * 0.5
+	for isle in outer_islands:
+		if v.distance_to(Vector2(isle.x, isle.y * iso_ratio)) + wobble * edge_wobble < isle.z:
+			return true
 	if v.length() + wobble * edge_wobble >= island_radius:
 		return false
 	if bay_depth > 0.0:

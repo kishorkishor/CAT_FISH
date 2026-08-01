@@ -188,6 +188,17 @@ func _use() -> void:
 			and not _focus.action.is_empty():
 		_run(_focus.action)
 		return
+	# A wild tree is felled where it stands, with no plot under it. That is what
+	# makes an untouched island worth the sail: the timber is standing on it.
+	if tool == Tools.AXE and _focus != null and is_instance_valid(_focus) \
+			and _focus.get("wood") != null and _focus.wood > 0:
+		Game.add_item("wood", _focus.wood)
+		Events.notice.emit("felled the %s for %d wood" % [_focus.label, _focus.wood])
+		_act("till")
+		_focus.queue_free()
+		_focus = null
+		return
+
 	# Afloat, the rod is the only thing that still works. Everything else wants
 	# ground under it, and saying so beats a press that does nothing.
 	if at_sea and tool != Tools.ROD:

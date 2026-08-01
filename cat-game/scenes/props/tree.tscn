@@ -6,6 +6,9 @@
 [node name="Tree" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_scenery")
+wood = 6
+label = "tree"
+hint = "fell it with the axe for wood"
 footprint = Vector2(20, 10)
 
 [node name="Sprite" type="Sprite2D" parent="."]

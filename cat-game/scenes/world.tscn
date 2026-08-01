@@ -77,6 +77,7 @@ edge_wobble = 1.8
 bay_depth = 6.0
 bay_angle_deg = 90.0
 bay_radius = 8.0
+outer_islands = Array[Vector3]([Vector3(-34, -26, 8), Vector3(37, -34, 6.5), Vector3(-30, 34, 7)])
 
 [node name="Water" type="TileMapLayer" parent="." unique_id=713474592]
 y_sort_enabled = true
@@ -90,6 +91,7 @@ skip_empty = true
 bay_depth = 9.0
 bay_angle_deg = 90.0
 bay_radius = 8.0
+outer_islands = Array[Vector3]([Vector3(-34, -26, 6.5), Vector3(37, -34, 5), Vector3(-30, 34, 5.5)])
 
 [node name="Land" type="TileMapLayer" parent="." unique_id=48079518]
 y_sort_enabled = true
@@ -103,6 +105,7 @@ skip_empty = true
 bay_depth = 9.0
 bay_angle_deg = 90.0
 bay_radius = 9.5
+outer_islands = Array[Vector3]([Vector3(-34, -26, 5), Vector3(37, -34, 3.5), Vector3(-30, 34, 4)])
 
 [node name="Farm" type="Node2D" parent="." unique_id=406881400 groups=["farm"]]
 script = ExtResource("28_farm")
@@ -211,6 +214,54 @@ position = Vector2(2912, 848)
 
 [node name="Tuft6" parent="Entities" unique_id=515499033 instance=ExtResource("23_tuft")]
 position = Vector2(3488, 816)
+
+[node name="IsleTree1" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(736, 240)
+
+[node name="IsleTree2" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(960, 288)
+
+[node name="IsleTree3" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(832, 384)
+
+[node name="IslePalm1" parent="Entities" instance=ExtResource("19_palm")]
+position = Vector2(1056, 336)
+
+[node name="IsleRock1" parent="Entities" instance=ExtResource("22_rock")]
+position = Vector2(800, 432)
+
+[node name="IsleBush1" parent="Entities" instance=ExtResource("21_bush")]
+position = Vector2(928, 496)
+
+[node name="IsleTree4" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(5280, 144)
+
+[node name="IslePalm2" parent="Entities" instance=ExtResource("19_palm")]
+position = Vector2(5344, 176)
+
+[node name="IsleTree5" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(5472, 208)
+
+[node name="IsleRock2" parent="Entities" instance=ExtResource("22_rock")]
+position = Vector2(5312, 256)
+
+[node name="IslePalm3" parent="Entities" instance=ExtResource("19_palm")]
+position = Vector2(5440, 288)
+
+[node name="IsleTree6" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(1184, 1200)
+
+[node name="IsleTree7" parent="Entities" instance=ExtResource("20_tree")]
+position = Vector2(1280, 1248)
+
+[node name="IslePalm4" parent="Entities" instance=ExtResource("19_palm")]
+position = Vector2(1184, 1296)
+
+[node name="IsleRock3" parent="Entities" instance=ExtResource("22_rock")]
+position = Vector2(1088, 1344)
+
+[node name="IsleBush2" parent="Entities" instance=ExtResource("21_bush")]
+position = Vector2(1088, 1376)
 
 [node name="Buildings" type="Node2D" parent="." unique_id=1373998934 groups=["buildings"]]
 script = ExtResource("29_buildings")

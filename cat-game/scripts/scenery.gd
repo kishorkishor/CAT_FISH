@@ -40,6 +40,10 @@ extends Node2D
 @export var label := ""
 ## What the cat could do here. Shown under the label.
 @export var hint := ""
+## Wood the axe gets out of it. 0 means the axe leaves it alone - a lamp post is
+## not timber. This is what makes a wild island worth sailing to: the trees on it
+## are the resource, and you have to go and get them.
+@export var wood := 0
 ## Verb run when "use" is pressed in range. Empty means it is only scenery.
 @export_enum("none:", "sleep", "shop", "cast") var action := ""
 ## How close the cat has to be, in pixels.
@@ -60,7 +64,9 @@ func _ready() -> void:
 	y_sort_enabled = true
 	_align()
 	_reshape()
-	if not label.is_empty() and not Engine.is_editor_hint():
+	# Anything you can walk up to and do something with has to be selectable, and
+	# a tree you can fell counts even though it has nothing to say.
+	if (not label.is_empty() or wood > 0) and not Engine.is_editor_hint():
 		add_to_group("interactable")
 
 
