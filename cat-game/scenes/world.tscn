@@ -48,6 +48,7 @@
 [ext_resource type="Resource" path="res://data/build/palm.tres" id="44_b"]
 [ext_resource type="Resource" path="res://data/build/bush.tres" id="45_b"]
 [ext_resource type="Resource" path="res://data/build/mooring.tres" id="46_b"]
+[ext_resource type="Resource" path="res://data/build/sprinkler.tres" id="47_b"]
 [ext_resource type="Resource" path="res://data/items/tomato_seed.tres" id="50_seed"]
 [ext_resource type="Resource" path="res://data/items/carrot_seed.tres" id="51_seed"]
 [ext_resource type="Resource" path="res://data/items/corn_seed.tres" id="52_seed"]
@@ -208,7 +209,7 @@ position = Vector2(3488, 816)
 
 [node name="Buildings" type="Node2D" parent="." unique_id=1373998934 groups=["buildings"]]
 script = ExtResource("29_buildings")
-catalogue = Array[ExtResource("25_iexy4")]([ExtResource("40_b"), ExtResource("41_b"), ExtResource("42_b"), ExtResource("43_b"), ExtResource("44_b"), ExtResource("45_b"), ExtResource("46_b")])
+catalogue = Array[ExtResource("25_iexy4")]([ExtResource("40_b"), ExtResource("41_b"), ExtResource("42_b"), ExtResource("43_b"), ExtResource("44_b"), ExtResource("45_b"), ExtResource("46_b"), ExtResource("47_b")])
 
 [node name="Interactor" type="Node2D" parent="." unique_id=1130752911 groups=["interactor"]]
 script = ExtResource("30_interactor")

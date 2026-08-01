@@ -54,6 +54,7 @@ var plots: Dictionary = {}
 
 @onready var _ground: TileMapLayer = get_parent().get_node("Water")
 @onready var _land: TileMapLayer = get_parent().get_node("Land")
+@onready var _buildings: Node2D = get_parent().get_node("Buildings")
 
 
 func _ready() -> void:
@@ -263,7 +264,7 @@ func _on_day_passed(_day: int) -> void:
 	var rained: bool = Weather.is_wet()
 	for key in plots:
 		var plot: Plot = plots[key]
-		if rained:
+		if rained or is_sprinkled(plot.cell):
 			plot.water = 1.0
 			plot.wilt_days = 0
 
@@ -292,6 +293,26 @@ func _on_day_passed(_day: int) -> void:
 				Events.notice.emit("a %s died of thirst" % _crop_name(plot.crop))
 		_refresh_sprite(plot)
 	queue_redraw()
+
+
+## Whether a sprinkler reaches this cell.
+##
+## Distance is measured on screen with the vertical doubled, the same flattening
+## every reach test in the game uses. Measuring in raw cell coordinates would
+## make a sprinkler water a stripe four times wider than it is deep, because a
+## cell is twice as wide as it is tall.
+func is_sprinkled(cell: Vector2i) -> bool:
+	if _buildings == null:
+		return false
+	var here := _ground.map_to_local(cell)
+	for p in _buildings.placed:
+		var radius: int = p.entry.waters_radius
+		if radius <= 0:
+			continue
+		var d := here - _ground.map_to_local(p.cell)
+		if Vector2(d.x, d.y * 2.0).length() <= float(radius) * _ground.tile_set.tile_size.x:
+			return true
+	return false
 
 
 func _crop_name(crop: CropData) -> String:

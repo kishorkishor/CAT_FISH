@@ -70,6 +70,7 @@ func _find_water_ahead() -> Vector2i:
 func _cast_to(cell: Vector2i) -> void:
 	_busy = true
 	_player.locked = true
+	_player.play_action("cast")
 	_bobber = preload("res://scenes/bobber.tscn").instantiate()
 	_bobber.position = _water.map_to_local(cell)
 	_world.get_node("Entities").add_child(_bobber)
@@ -82,8 +83,10 @@ func _cast_to(cell: Vector2i) -> void:
 
 	var minigame := preload("res://scenes/fishing.tscn").instantiate()
 	add_child(minigame)
-	minigame.caught.connect(func(_fish): _finish())
-	minigame.escaped.connect(_finish)
+	minigame.caught.connect(func(_fish): _finish(true))
+	minigame.escaped.connect(func(): _finish(false))
+	# The fight lasts as long as it lasts, so the haul is held rather than timed.
+	_player.play_action("reel", true)
 	var used := Tackle.consume()
 	minigame.start(_pick_fish(_water.depth_at(cell) + Weather.depth_bonus()
 		+ Tackle.depth_bonus_of(used), Tackle.richness_of(used)))
@@ -108,8 +111,11 @@ func _pick_fish(depth: int, richness := 0.0) -> FishData:
 	return here[mini(int(biased * here.size()), here.size() - 1)]
 
 
-func _finish() -> void:
+func _finish(landed := false) -> void:
 	if is_instance_valid(_bobber):
 		_bobber.queue_free()
+	_player.stop_action()
 	_player.locked = false
 	_busy = false
+	if landed:
+		_player.play_action("catch")

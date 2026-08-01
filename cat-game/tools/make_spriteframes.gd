@@ -18,7 +18,8 @@ const DIRECTIONS: PackedStringArray = [
 
 ## Animations that should not loop. A one-shot that loops reads as the cat having
 ## a fit rather than swinging a hoe once.
-const ONCE: PackedStringArray = ["jump", "till", "water", "plant", "harvest", "build"]
+const ONCE: PackedStringArray = ["jump", "till", "water", "plant", "harvest", "build",
+	"cast", "catch"]
 
 
 func _initialize() -> void:

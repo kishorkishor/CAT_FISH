@@ -158,7 +158,9 @@ func _physics_process(delta: float) -> void:
 ## The length is read off the animation rather than passed in, so retiming the
 ## art in the SpriteFrames retimes the cat without touching this file. An action
 ## with no art yet falls through the chain to idle and simply costs nothing.
-func play_action(action: String) -> void:
+## `hold` keeps it running until stop_action(). Reeling lasts as long as the
+## fight does, which nothing here can know in advance.
+func play_action(action: String, hold := false) -> void:
 	if in_water or is_jumping():
 		return
 	_action = action
@@ -170,14 +172,25 @@ func play_action(action: String) -> void:
 	if anim.is_empty() or anim.begins_with("idle_"):
 		_action = ""
 		return
+	if hold:
+		_action_left = INF
+		return
 	_action_left = float(set.get_frame_count(anim)) / maxf(1.0, set.get_animation_speed(anim))
+
+
+func stop_action() -> void:
+	_action = ""
+	_action_left = 0.0
 
 
 func _update_action(delta: float, input: Vector2) -> void:
 	if _action.is_empty():
 		return
 	# Walking away cancels it. A cat frozen through its own swing while you are
-	# holding a direction reads as input being dropped.
+	# holding a direction reads as input being dropped. Held actions are exempt:
+	# something else owns the cat for the duration and input is already locked.
+	if is_inf(_action_left):
+		return
 	if input != Vector2.ZERO or in_water:
 		_action = ""
 		return

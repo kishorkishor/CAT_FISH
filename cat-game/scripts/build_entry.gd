@@ -14,6 +14,14 @@ extends Resource
 ## Piers and moorings go in the water; everything else wants dry land.
 @export var on_water := false
 
+@export_group("Sprinkler")
+## How far it throws water, in cells. 0 means it is not a sprinkler at all.
+##
+## Measured on screen rather than in cell coordinates: a cell is twice as wide as
+## it is tall, so a square in cell space reads as a long thin rectangle on the
+## ground and a sprinkler would appear to water in a stripe.
+@export var waters_radius := 0
+
 
 ## Every cell this occupies, relative to its anchor.
 func cells() -> Array[Vector2i]:
