@@ -104,6 +104,12 @@ var holding_rod := false
 ## Input is ignored but physics keeps running, so the cat glides to a stop.
 var locked := false
 
+## The swing, pour or crouch the cat is part-way through, and how long is left of
+## it. A one-shot: it outranks standing still but not walking away, so a tool
+## never traps you mid-animation.
+var _action := ""
+var _action_left := 0.0
+
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _shadow: Node2D = $Shadow
 @onready var _ripple: AnimatedSprite2D = $Ripple
@@ -144,6 +150,69 @@ func _physics_process(delta: float) -> void:
 	_update_animation(input, state)
 	_update_hop(delta)
 	_update_swell(delta)
+	_update_action(delta, input)
+
+
+## Play the one-shot for a tool being used, facing whatever the cat is facing.
+##
+## The length is read off the animation rather than passed in, so retiming the
+## art in the SpriteFrames retimes the cat without touching this file. An action
+## with no art yet falls through the chain to idle and simply costs nothing.
+func play_action(action: String) -> void:
+	if in_water or is_jumping():
+		return
+	_action = action
+	_action_left = 0.0
+	var set := _set_for_action()
+	if set == null:
+		return
+	var anim := _first_animation(set, _action_chain(action, _facing))
+	if anim.is_empty() or anim.begins_with("idle_"):
+		_action = ""
+		return
+	_action_left = float(set.get_frame_count(anim)) / maxf(1.0, set.get_animation_speed(anim))
+
+
+func _update_action(delta: float, input: Vector2) -> void:
+	if _action.is_empty():
+		return
+	# Walking away cancels it. A cat frozen through its own swing while you are
+	# holding a direction reads as input being dropped.
+	if input != Vector2.ZERO or in_water:
+		_action = ""
+		return
+	_action_left -= delta
+	if _action_left <= 0.0:
+		_action = ""
+
+
+func is_acting() -> bool:
+	return not _action.is_empty()
+
+
+func _set_for_action() -> SpriteFrames:
+	if holding_rod and frames_rod != null:
+		return frames_rod
+	return frames_upright
+
+
+## Every action falls back to the swing before it falls back to standing, so a
+## new tool reads as *doing something* from the day it is added, and generating
+## its own art later is a drop-in.
+func _action_chain(action: String, direction: String) -> PackedStringArray:
+	var chain := PackedStringArray(["%s_%s" % [action, direction]])
+	match action:
+		"build": chain.append("till_%s" % direction)
+		"harvest": chain.append("plant_%s" % direction)
+	chain.append("idle_%s" % direction)
+	return chain
+
+
+func _first_animation(set: SpriteFrames, chain: PackedStringArray) -> String:
+	for candidate in chain:
+		if set.has_animation(candidate):
+			return candidate
+	return ""
 
 
 ## A pounce needs the four-legged rig to actually have the frames for it,
@@ -161,6 +230,10 @@ func _resolve_state(input: Vector2) -> String:
 		return "swim"
 	if is_jumping():
 		return "jump"
+	# A swing in progress beats standing still, and loses to walking away, which
+	# _update_action has already cancelled by the time we get here.
+	if is_acting():
+		return _action
 	if input == Vector2.ZERO:
 		return "wade_idle" if water_depth == 1 else "idle"
 	if water_depth == 1:
@@ -258,21 +331,21 @@ func _update_animation(input: Vector2, state: String) -> void:
 	# Fall back down the chain rather than erroring, so a state whose animation has
 	# not been generated yet still faces the right way instead of freezing. Wading
 	# deliberately falls through to the walk cycle - the cat really is walking.
-	var chain := PackedStringArray(["%s_%s" % [state, _facing]])
-	match state:
-		"wade": chain.append("walk_%s" % _facing)
-		"wade_idle": chain.append("idle_%s" % _facing)
-		"deepswim": chain.append("swim_%s" % _facing)
-		# A pounce sits on the four-legged rig, which has a run cycle but no walk.
-		"jump": chain.append("run_%s" % _facing)
-	chain.append("walk_%s" % _facing)
-	chain.append("idle_%s" % _facing)
+	var chain: PackedStringArray
+	if state == _action and is_acting():
+		chain = _action_chain(state, _facing)
+	else:
+		chain = PackedStringArray(["%s_%s" % [state, _facing]])
+		match state:
+			"wade": chain.append("walk_%s" % _facing)
+			"wade_idle": chain.append("idle_%s" % _facing)
+			"deepswim": chain.append("swim_%s" % _facing)
+			# A pounce sits on the four-legged rig, which has a run cycle but no walk.
+			"jump": chain.append("run_%s" % _facing)
+		chain.append("walk_%s" % _facing)
+		chain.append("idle_%s" % _facing)
 
-	var wanted := ""
-	for candidate in chain:
-		if wanted_set.has_animation(candidate):
-			wanted = candidate
-			break
+	var wanted := _first_animation(wanted_set, chain)
 	if wanted.is_empty():
 		return
 	_sprite.speed_scale = _rate_for(state, wanted_set, wanted)

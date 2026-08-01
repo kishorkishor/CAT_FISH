@@ -196,6 +196,7 @@ func _use_build() -> void:
 		Events.notice.emit(reason)
 		return
 	if _buildings.place(cell, entry):
+		_act("build")
 		Events.notice.emit("built the %s" % entry.display_name)
 
 
@@ -205,15 +206,18 @@ func _use_on_ground() -> void:
 		Tools.HOE:
 			if _farm.plots.has(cell):
 				if _farm.clear(cell):
+					_act("till")
 					Events.notice.emit("cleared the plot")
 				else:
 					Events.notice.emit("something is growing there")
 			elif _farm.till(cell):
+				_act("till")
 				Events.notice.emit("tilled the soil")
 			else:
 				Events.notice.emit("the hoe needs bare grass")
 		Tools.CAN:
 			if _farm.water(cell):
+				_act("water")
 				Events.notice.emit("watered")
 			else:
 				Events.notice.emit("nothing to water here")
@@ -224,9 +228,18 @@ func _use_on_ground() -> void:
 ## The bare paw does two jobs: it picks ripe crops, and it sows seed into empty
 ## soil. One button, and which one it means is never ambiguous - a plot either
 ## has something ready or it does not.
+## Only a *successful* use animates. Swinging at nothing sells the idea that
+## something happened, which is worse than the cat standing still and the HUD
+## saying why it did not.
+func _act(action: String) -> void:
+	if _player != null:
+		_player.play_action(action)
+
+
 func _hand(cell: Vector2i) -> void:
 	var picked: int = _farm.harvest(cell)
 	if picked > 0:
+		_act("harvest")
 		return
 	var plot = _farm.plots.get(cell)
 	if plot == null:
@@ -242,6 +255,7 @@ func _hand(cell: Vector2i) -> void:
 	if not Game.take_item(item.id, 1):
 		return
 	_farm.plant(cell, item.plants)
+	_act("plant")
 	Events.notice.emit("planted %s" % item.display_name)
 
 
