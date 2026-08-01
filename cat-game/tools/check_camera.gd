@@ -26,4 +26,28 @@ func _initialize() -> void:
 		print("FAIL limits inverted")
 		failures += 1
 
+	# The camera has to actually be allowed to sit where the cat starts, which is
+	# the middle of the island. This is what catches the world drifting out of its
+	# own fence rather than the fence merely being some valid rectangle.
+	var here: Vector2 = player.global_position
+	if here.x < cam.limit_left or here.x > cam.limit_right \
+			or here.y < cam.limit_top or here.y > cam.limit_bottom:
+		print("FAIL the cat starts outside the camera limits: %s not in %s" % [here, limits])
+		failures += 1
+	else:
+		print("ok   the cat starts inside the camera limits")
+
+	# The world is shifted so the middle of the patch lands on the origin - that is
+	# what makes the scene open on the island in the editor instead of on empty sea
+	# thousands of pixels away. A hand-set offset and a changed grid_size drift
+	# apart silently, so check it rather than trust it.
+	var water: TileMapLayer = world.get_node("Water")
+	var centre := water.to_global(water.map_to_local(
+		Vector2i(water.grid_size / 2, water.grid_size / 2)))
+	if centre.length() > float(water.tile_set.tile_size.x):
+		print("FAIL the island centre is %s, not on the origin - fix World.position" % centre)
+		failures += 1
+	else:
+		print("ok   the island centre sits on the origin (%s)" % centre)
+
 	quit(failures)

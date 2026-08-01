@@ -65,7 +65,7 @@ func _initialize() -> void:
 		if water.is_fully_secondary(centre + Vector2i(0, j)):
 			shore = j
 			break
-	player.global_position = water.map_to_local(centre + Vector2i(0, shore - 2))
+	player.global_position = water.to_global(water.map_to_local(centre + Vector2i(0, shore - 2)))
 	await physics_frame
 
 	game.rod = bamboo

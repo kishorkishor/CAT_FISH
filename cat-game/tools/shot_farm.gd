@@ -29,7 +29,7 @@ func _process(_delta: float) -> bool:
 				farm.water(cell)
 				farm._refresh_sprite(farm.plots[cell])
 		farm.queue_redraw()
-		player.global_position = water.map_to_local(centre + Vector2i(-2, 4))
+		player.global_position = water.to_global(water.map_to_local(centre + Vector2i(-2, 4)))
 		var cam: Camera2D = player.get_node("Camera2D")
 		cam.zoom = Vector2(2.2, 2.2)
 	if _frames < 25:

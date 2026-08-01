@@ -18,7 +18,7 @@ func _initialize() -> void:
 	_ok(player.frames_rod != null, "the rod set is attached")
 	_ok(player.frames_rod.has_animation("walk_south"), "and it can walk")
 
-	player.global_position = water.map_to_local(centre)
+	player.global_position = water.to_global(water.map_to_local(centre))
 	interactor.tool = Tools.HAND
 	Input.action_press("move_right")
 	for i in 6: await physics_frame
@@ -42,7 +42,7 @@ func _initialize() -> void:
 		if water.depth_at(centre + Vector2i(step, 0)) >= 2:
 			deep = centre + Vector2i(step, 0)
 			break
-	player.global_position = water.map_to_local(deep)
+	player.global_position = water.to_global(water.map_to_local(deep))
 	for i in 8: await physics_frame
 	_ok(sprite.sprite_frames == player.frames_upright, "in deep water it falls back to the swim set")
 	_ok(sprite.animation.begins_with("swim") or sprite.animation.begins_with("deep"),

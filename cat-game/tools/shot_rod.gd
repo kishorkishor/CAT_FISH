@@ -17,7 +17,7 @@ func _process(_d: float) -> bool:
 		for j in range(1, 40):
 			if water.is_fully_secondary(centre + Vector2i(0, j)):
 				shore = j; break
-		player.global_position = water.map_to_local(centre + Vector2i(0, shore - 3))
+		player.global_position = water.to_global(water.map_to_local(centre + Vector2i(0, shore - 3)))
 		player.get_node("Camera2D").zoom = Vector2(3.0, 3.0)
 		Input.action_press("move_down")
 	if _frames < 24:

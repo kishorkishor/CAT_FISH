@@ -29,7 +29,7 @@ func _process(_delta: float) -> bool:
 		var centre := Vector2i(water.grid_size / 2, water.grid_size / 2)
 		for j in range(1, water.grid_size / 2):
 			if water.is_fully_secondary(centre + Vector2i(0, j)):
-				player.global_position = water.map_to_local(centre + Vector2i(0, j - 3))
+				player.global_position = water.to_global(water.map_to_local(centre + Vector2i(0, j - 3)))
 				break
 		casting.wait_min = 0.2
 		casting.wait_max = 0.3

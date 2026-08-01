@@ -41,7 +41,7 @@ func _arm(which: String) -> void:
 		if int(water.depth_at(candidate)) == wanted_depth:
 			cell = candidate
 			break
-	player.global_position = water.map_to_local(cell)
+	player.global_position = water.to_global(water.map_to_local(cell))
 	_release()
 	Input.action_press("move_right")
 	if which == "pounce":

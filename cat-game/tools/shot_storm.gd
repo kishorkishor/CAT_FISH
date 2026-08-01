@@ -13,7 +13,7 @@ func _process(_d: float) -> bool:
 		var world := root.get_node("World")
 		var water: TileMapLayer = world.get_node("Water")
 		var player = world.get_node("Entities/Player")
-		player.global_position = water.map_to_local(Vector2i(water.grid_size/2, water.grid_size/2) + Vector2i(0, 20))
+		player.global_position = water.to_global(water.map_to_local(Vector2i(water.grid_size/2, water.grid_size/2) + Vector2i(0, 20)))
 		player.get_node("Camera2D").zoom = Vector2(1.6, 1.6)
 	if _frames < 90:
 		return false

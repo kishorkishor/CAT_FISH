@@ -28,7 +28,7 @@ func _process(_delta: float) -> bool:
 		for step in range(1, water.grid_size):
 			var cell := centre + Vector2i(step, step)
 			if water.is_fully_secondary(cell):
-				player.global_position = water.map_to_local(cell)
+				player.global_position = water.to_global(water.map_to_local(cell))
 				break
 		Input.action_press("move_right")
 		_placed = true

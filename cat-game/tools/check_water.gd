@@ -13,7 +13,7 @@ func _initialize() -> void:
 	var last := ""
 	for step in range(0, water.grid_size / 2):
 		var cell := centre + Vector2i(step, step)
-		player.global_position = water.map_to_local(cell)
+		player.global_position = water.to_global(water.map_to_local(cell))
 		await physics_frame
 		await physics_frame
 		var tag := "WATER" if player.in_water else "land "

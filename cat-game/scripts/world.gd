@@ -53,7 +53,10 @@ func _set_camera_limits() -> void:
 	var lo := Vector2.INF
 	var hi := -Vector2.INF
 	for c in corners:
-		var p := _water.map_to_local(c)
+		# Camera limits are global, and the world is shifted so that the middle of
+		# the patch sits on the origin. Reading the cell position as local would
+		# fence the camera around a rectangle the island is not in.
+		var p := _water.to_global(_water.map_to_local(c))
 		lo = lo.min(p)
 		hi = hi.max(p)
 	var pad := Vector2(_sea.tile_set.tile_size)

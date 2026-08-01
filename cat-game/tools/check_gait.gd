@@ -39,7 +39,7 @@ func _initialize() -> void:
 	# otherwise the cat rears onto two legs mid-stride to jump.
 	for run_held in [false, true]:
 		var label := "pounce" if run_held else "hop"
-		player.global_position = water.map_to_local(centre)
+		player.global_position = water.to_global(water.map_to_local(centre))
 		_release_all()
 		await physics_frame
 		Input.action_press("move_right")
@@ -93,7 +93,7 @@ func _initialize() -> void:
 	for depth in [2, 3]:
 		if not sample.has(depth):
 			continue
-		player.global_position = water.map_to_local(sample[depth])
+		player.global_position = water.to_global(water.map_to_local(sample[depth]))
 		Input.action_press("move_right")
 		for i in 8:
 			await physics_frame

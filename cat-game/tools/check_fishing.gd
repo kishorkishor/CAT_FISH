@@ -35,7 +35,7 @@ func _initialize() -> void:
 		if water.is_fully_secondary(centre + Vector2i(0, j)):
 			shore = j
 			break
-	player.global_position = water.map_to_local(centre + Vector2i(0, shore - 3))
+	player.global_position = water.to_global(water.map_to_local(centre + Vector2i(0, shore - 3)))
 	await physics_frame
 
 	# --- Round 1: let it escape -------------------------------------------

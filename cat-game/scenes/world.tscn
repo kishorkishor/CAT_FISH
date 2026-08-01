@@ -58,6 +58,7 @@
 
 
 [node name="World" type="Node2D"]
+position = Vector2(-3104, -784)
 script = ExtResource("5_world")
 
 [node name="Sea" type="TileMapLayer" parent="."]

@@ -26,7 +26,7 @@ func _initialize() -> void:
 
 	for label in ["land", "water"]:
 		var offset := 0 if label == "land" else open
-		player.global_position = water.map_to_local(centre + Vector2i(offset, offset))
+		player.global_position = water.to_global(water.map_to_local(centre + Vector2i(offset, offset)))
 		Input.action_press("move_right")
 		for i in 6:
 			await physics_frame

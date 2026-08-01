@@ -35,7 +35,7 @@ func _initialize() -> void:
 	for depth in [0, 1, 2, 3]:
 		if not sample.has(depth):
 			continue
-		player.global_position = water.map_to_local(sample[depth])
+		player.global_position = water.to_global(water.map_to_local(sample[depth]))
 		Input.action_press("move_right")
 		for i in 8:
 			await physics_frame

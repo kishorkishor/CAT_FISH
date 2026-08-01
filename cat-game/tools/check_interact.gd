@@ -61,7 +61,7 @@ func _initialize() -> void:
 	var farm: Node2D = world.get_node("Farm")
 	var water: TileMapLayer = world.get_node("Water")
 	var centre := Vector2i(water.grid_size / 2, water.grid_size / 2)
-	player.global_position = water.map_to_local(centre + Vector2i(1, -4))
+	player.global_position = water.to_global(water.map_to_local(centre + Vector2i(1, -4)))
 	await process_frame
 	var plots_before: int = farm.plots.size()
 	interactor._unhandled_input(ev)
