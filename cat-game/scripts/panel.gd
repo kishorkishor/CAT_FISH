@@ -91,7 +91,7 @@ func _rebuild() -> void:
 				ripe[name] = ripe.get(name, 0) + 1
 			else:
 				growing[name] = growing.get(name, 0) + 1
-			if not plot.watered:
+			if plot.thirsty():
 				dry += 1
 		for name in ripe:
 			_crops.add_child(_line("%d %s" % [ripe[name], name], "ready to pick"))

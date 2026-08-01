@@ -76,7 +76,11 @@ func _process(_delta: float) -> void:
 		return
 
 	# Say what the tool would do before it is used, so a miss is never a mystery.
-	var action: String = _farm.action_at(_interactor.target_cell(), _interactor.tool)
+	var cell: Vector2i = _interactor.target_cell()
+	var action: String = _farm.action_at(cell, _interactor.tool)
+	# Standing at a planted plot, the state of the plant outranks the verb: what
+	# you want to know is when it next wants water, not that E would harvest it.
+	var status: String = _farm.describe(cell)
 	if _interactor.tool == Tools.BUILD:
 		var entry: BuildEntry = _interactor.current_build()
 		var reason: String = _interactor._buildings.why_not(_interactor.cursor_cell(), entry)
@@ -84,6 +88,8 @@ func _process(_delta: float) -> void:
 			if entry != null else "nothing to build"
 	elif _interactor.tool == Tools.ROD:
 		_prompt.text = "cast into the water"
+	elif not status.is_empty():
+		_prompt.text = "%s  -  %s" % [action, status] if not action.is_empty() else status
 	elif action.is_empty():
 		_prompt.text = ""
 	else:

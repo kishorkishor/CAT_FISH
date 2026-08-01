@@ -125,11 +125,14 @@ func _initialize() -> void:
 	_ok(not player.is_acting(), "a refused use does not animate")
 
 	# --- watering pours ----------------------------------------------------
+	# Sowing leaves the soil damp, and the can refuses a full tank, so let it run
+	# down first - otherwise this tests "nothing happens" and calls it a pass.
+	farm.plots[cell].water = 0.2
 	interactor.tool = Tools.CAN
 	await physics_frame
 	_use(interactor)
 	await physics_frame
-	_ok(farm.plots[cell].watered, "the plot got watered")
+	_ok(farm.plots[cell].water >= 1.0, "the plot got watered")
 	_ok(player.is_acting() and sprite.animation.begins_with("water_"),
 		"the can pours: %s" % sprite.animation)
 

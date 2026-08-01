@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/lamp_post.tscn" id="26_lamp"]
 [ext_resource type="PackedScene" path="res://scenes/props/house_blue.tscn" id="27_house_blue"]
 [ext_resource type="Script" uid="uid://c22bvvtitu4p3" path="res://scripts/farm.gd" id="28_farm"]
+[ext_resource type="Script" path="res://scripts/water_bars.gd" id="38_bars"]
 [ext_resource type="Script" uid="uid://ck4twlxe1ep0d" path="res://scripts/buildings.gd" id="29_buildings"]
 [ext_resource type="Script" uid="uid://cfdrcv88e1me4" path="res://scripts/interactor.gd" id="30_interactor"]
 [ext_resource type="Script" uid="uid://c67ogjfc5hrdy" path="res://scripts/daylight.gd" id="31_daylight"]
@@ -102,6 +103,9 @@ bay_radius = 9.5
 
 [node name="Farm" type="Node2D" parent="." unique_id=406881400 groups=["farm"]]
 script = ExtResource("28_farm")
+
+[node name="WaterBars" type="Node2D" parent="Farm"]
+script = ExtResource("38_bars")
 
 [node name="Entities" type="Node2D" parent="." unique_id=1181940435]
 y_sort_enabled = true

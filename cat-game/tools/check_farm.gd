@@ -35,32 +35,59 @@ func _initialize() -> void:
 
 	var plot = farm.plots[plot_cell]
 
-	# --- growth needs water ------------------------------------------------
-	clock.day_passed.emit(2)
-	_ok(plot.stage == 0, "a dry plot does not grow")
+	# --- a seed goes in damp ------------------------------------------------
+	_ok(plot.water >= 1.0, "sowing leaves the soil watered")
+
+	# --- growth needs water --------------------------------------------------
+	# The weather is driven by hand here rather than rolled. Emitting day_passed
+	# re-rolls the sky first, so "hold it dry for six days" turned into "hold it
+	# dry for however many days the RNG felt like" and the assertion drifted.
+	var weather := root.get_node("Weather")
+	var stage_before: int = plot.stage
+	for i in 6:
+		weather.kind = weather.Kind.CLEAR
+		plot.water = 0.0
+		farm._on_day_passed(2 + i)
+	_ok(plot.stage == stage_before, "a dry plot does not grow")
+
+	# ...and it wilts, then dies, rather than sitting dry forever.
+	_ok(plot.dead, "left dry past its grace, the plant died")
+
+	# --- a watered one ripens -------------------------------------------------
+	farm.clear(plot_cell)
+	farm.plots.erase(plot_cell)
+	_ok(farm.till(plot_cell), "re-tilled the plot")
+	_ok(farm.plant(plot_cell, crop), "re-planted a carrot")
+	plot = farm.plots[plot_cell]
 
 	var days := 0
 	while not crop.is_ripe(plot.stage) and days < 20:
 		farm.water(plot_cell)
-		clock.day_passed.emit(3 + days)
+		clock.day_passed.emit(20 + days)
 		days += 1
 	_ok(crop.is_ripe(plot.stage), "watered %d days -> ripe (stage %d)" % [days, plot.stage])
+	_ok(not plot.dead, "and it is alive")
 
 	# What the soil wakes up like is the weather's business, so roll days until
 	# each sky has had a turn rather than asserting whichever one came up. Doing
 	# it the other way passed for weeks and then failed the first rainy morning.
-	var weather := root.get_node("Weather")
-	var day := 3 + days
+	# Rain has to be worth checking the forecast for: it refills the tank you
+	# would otherwise have walked round with a can to fill.
 	for wanted_wet in [false, true]:
-		var tries := 0
-		while weather.is_wet() != wanted_wet and tries < 60:
-			farm.water(plot_cell)
-			clock.day_passed.emit(day)
-			day += 1
-			tries += 1
-		_ok(weather.is_wet() == wanted_wet and plot.watered == wanted_wet,
-			"a %s morning leaves the soil %s" % [
-				weather.name_of(), "watered" if plot.watered else "dry"])
+		weather.kind = weather.Kind.RAIN if wanted_wet else weather.Kind.CLEAR
+		plot.stage = 0
+		plot.dead = false
+		plot.wilt_days = 0
+		plot.water = 0.0
+		farm._on_day_passed(40)
+		var topped_up: bool = plot.water > 0.0
+		_ok(topped_up == wanted_wet,
+			"a %s morning leaves the tank %s (%.2f)" % [
+				weather.name_of(), "topped up" if topped_up else "empty", plot.water])
+	# The dry run above will have killed it again; put it back for the harvest.
+	plot.dead = false
+	plot.stage = crop.stage_count() - 1
+	farm.water(plot_cell)
 
 	# --- harvest ------------------------------------------------------------
 	var before: int = game.count_of("carrot")

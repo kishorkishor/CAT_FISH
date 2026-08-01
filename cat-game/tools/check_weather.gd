@@ -31,14 +31,18 @@ func _initialize() -> void:
 	var plot = farm.plots[cell]
 
 	weather.kind = weather.Kind.CLEAR
-	plot.watered = true
+	plot.water = 1.0
+	plot.stage = 0
 	farm._on_day_passed(2)
-	_ok(not plot.watered, "on a clear day the soil dries overnight")
+	_ok(plot.water < 1.0, "on a clear day the soil dries out")
 
 	weather.kind = weather.Kind.RAIN
-	plot.watered = false
+	plot.water = 0.0
+	plot.stage = 0
+	plot.dead = false
+	plot.wilt_days = 0
 	farm._on_day_passed(3)
-	_ok(plot.watered, "rain leaves the soil wet, so the can can stay in the shed")
+	_ok(plot.water > 0.0, "rain fills the tank, so the can can stay in the shed")
 
 	# a crop left alone should still ripen through a wet week
 	plot.stage = 0
