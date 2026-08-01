@@ -37,7 +37,7 @@ func _draw() -> void:
 	# ground and needs no art, and drawing it here keeps it under every plant.
 	for key in plots:
 		var plot: Plot = plots[key]
-		var centre := to_local(_ground.map_to_local(plot.cell))
+		var centre := to_local(_ground.to_global(_ground.map_to_local(plot.cell)))
 		var size := Vector2(_ground.tile_set.tile_size)
 		var points := PackedVector2Array([
 			centre + Vector2(-size.x * 0.5, 0), centre + Vector2(0, -size.y * 0.5),
@@ -165,7 +165,7 @@ func _refresh_sprite(plot: Plot) -> void:
 		plot.sprite = Sprite2D.new()
 		plot.sprite.centered = false
 		add_child(plot.sprite)
-		plot.sprite.position = to_local(_ground.map_to_local(plot.cell))
+		plot.sprite.position = to_local(_ground.to_global(_ground.map_to_local(plot.cell)))
 	var texture: Texture2D = plot.crop.stages[mini(plot.stage, plot.crop.stage_count() - 1)]
 	plot.sprite.texture = texture
 	if texture != null:

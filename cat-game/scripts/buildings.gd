@@ -57,7 +57,7 @@ func clear_ghost() -> void:
 func move_ghost(cell: Vector2i) -> void:
 	if _ghost == null:
 		return
-	_ghost.position = to_local(_ground.map_to_local(cell))
+	_ghost.position = to_local(_ground.to_global(_ground.map_to_local(cell)))
 	_ghost.modulate = Color(0.6, 1.0, 0.6, 0.6) if can_place(cell, _ghost_entry) \
 		else Color(1.0, 0.5, 0.5, 0.6)
 
@@ -97,7 +97,7 @@ func place(cell: Vector2i, entry: BuildEntry, charge := true) -> bool:
 	p.entry = entry
 	p.cell = cell
 	p.node = entry.scene.instantiate()
-	p.node.position = to_local(_ground.map_to_local(cell))
+	p.node.position = to_local(_ground.to_global(_ground.map_to_local(cell)))
 	add_child(p.node)
 	placed.append(p)
 	if charge:
