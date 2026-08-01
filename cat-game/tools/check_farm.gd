@@ -45,7 +45,22 @@ func _initialize() -> void:
 		clock.day_passed.emit(3 + days)
 		days += 1
 	_ok(crop.is_ripe(plot.stage), "watered %d days -> ripe (stage %d)" % [days, plot.stage])
-	_ok(not plot.watered, "soil dries overnight")
+
+	# What the soil wakes up like is the weather's business, so roll days until
+	# each sky has had a turn rather than asserting whichever one came up. Doing
+	# it the other way passed for weeks and then failed the first rainy morning.
+	var weather := root.get_node("Weather")
+	var day := 3 + days
+	for wanted_wet in [false, true]:
+		var tries := 0
+		while weather.is_wet() != wanted_wet and tries < 60:
+			farm.water(plot_cell)
+			clock.day_passed.emit(day)
+			day += 1
+			tries += 1
+		_ok(weather.is_wet() == wanted_wet and plot.watered == wanted_wet,
+			"a %s morning leaves the soil %s" % [
+				weather.name_of(), "watered" if plot.watered else "dry"])
 
 	# --- harvest ------------------------------------------------------------
 	var before: int = game.count_of("carrot")
